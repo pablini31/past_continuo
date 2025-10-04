@@ -1,0 +1,313 @@
+<!-- views/practice.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Practice - Past Continuous Builder</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container">
+      <div class="navbar-content">
+        <a href="/" class="navbar-brand">
+          📚 Past Continuous Builder
+        </a>
+        <ul class="navbar-menu">
+          <li><span class="navbar-link" id="user-welcome">Welcome, <strong id="username"></strong>!</span></li>
+          <li><a href="#" id="logout-btn" class="btn btn-danger btn-sm">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Stats Section -->
+  <section style="background: var(--bg-primary); padding: 2rem 0; box-shadow: var(--shadow);">
+    <div class="container">
+      <div class="stats-grid" style="margin: 0;">
+        <div class="stat-card" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);">
+          <div class="stat-value" id="total-points">0</div>
+          <div class="stat-label">Total Points</div>
+        </div>
+        
+        <div class="stat-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+          <div class="stat-value" id="accuracy">0%</div>
+          <div class="stat-label">Accuracy</div>
+        </div>
+        
+        <div class="stat-card" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+          <div class="stat-value" id="level">Beginner</div>
+          <div class="stat-label">Level</div>
+        </div>
+        
+        <div class="stat-card" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+          <div class="stat-value" id="streak">0 🔥</div>
+          <div class="stat-label">Day Streak</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Practice Area -->
+  <div class="practice-container">
+    <div class="sentence-builder">
+      <h2 class="text-center mb-4">Build Your Sentence 📝</h2>
+
+      <!-- Alert para feedback -->
+      <div id="feedback-container"></div>
+
+      <!-- Formulario de oración -->
+      <form id="sentence-form">
+        <div class="form-group">
+          <label for="part1" class="form-label">First Part (use Past Continuous)</label>
+          <input 
+            type="text" 
+            id="part1" 
+            class="form-input" 
+            placeholder="I was studying..."
+            required
+          >
+          <small class="form-help">Example: "I was cooking", "She was reading"</small>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Choose a Connector</label>
+          <div class="flex gap-2">
+            <button type="button" class="btn btn-outline connector-btn" data-connector="while">while</button>
+            <button type="button" class="btn btn-outline connector-btn" data-connector="when">when</button>
+            <button type="button" class="btn btn-outline connector-btn" data-connector="as">as</button>
+          </div>
+          <input type="hidden" id="connector" required>
+        </div>
+
+        <!-- Sugerencias -->
+        <div id="suggestions-container" class="hidden">
+          <div class="suggestions-box">
+            <h4>💡 Suggestions (click to select):</h4>
+            <div id="suggestions-list"></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="part2" class="form-label">Second Part</label>
+          <input 
+            type="text" 
+            id="part2" 
+            class="form-input" 
+            placeholder="Select a suggestion or write your own..."
+            required
+          >
+          <small class="form-help">Example: "my brother was playing videogames"</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg btn-block">
+          Check Sentence ✓
+        </button>
+      </form>
+
+      <!-- Preview -->
+      <div id="sentence-preview" class="mt-4 text-center hidden">
+        <h3>Your Sentence:</h3>
+        <p style="font-size: 1.25rem; color: var(--primary); font-weight: 600;" id="preview-text"></p>
+      </div>
+    </div>
+
+    <!-- History Section -->
+    <div class="card mt-5">
+      <h3 class="mb-3">Recent Sentences 📜</h3>
+      <div id="history-container">
+        <p class="text-secondary text-center">No sentences yet. Start practicing!</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Verificar autenticación
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+    if (!token) {
+      window.location.href = '/views/login.html';
+    }
+
+    // Mostrar username
+    document.getElementById('username').textContent = user.username || 'User';
+
+    // Logout
+    document.getElementById('logout-btn').addEventListener('click', (e) => {
+      e.preventDefault();
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/views/login.html';
+    });
+
+    // Cargar estadísticas
+    async function loadStats() {
+      try {
+        const response = await fetch('/api/practice/stats', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+          const stats = data.data.stats;
+          document.getElementById('total-points').textContent = stats.totalPoints || 0;
+          document.getElementById('accuracy').textContent = `${stats.accuracy || 0}%`;
+          document.getElementById('level').textContent = stats.level || 'Beginner';
+          document.getElementById('streak').textContent = `${stats.streak || 0} 🔥`;
+        }
+      } catch (error) {
+        console.error('Error loading stats:', error);
+      }
+    }
+
+    loadStats();
+
+    // Manejar conectores
+    const connectorButtons = document.querySelectorAll('.connector-btn');
+    let selectedConnector = null;
+
+    connectorButtons.forEach(btn => {
+      btn.addEventListener('click', async () => {
+        // Remover selección anterior
+        connectorButtons.forEach(b => b.classList.remove('btn-primary'));
+        connectorButtons.forEach(b => b.classList.add('btn-outline'));
+        
+        // Seleccionar nuevo
+        btn.classList.remove('btn-outline');
+        btn.classList.add('btn-primary');
+        
+        selectedConnector = btn.dataset.connector;
+        document.getElementById('connector').value = selectedConnector;
+
+        // Agregar conector al part1
+        const part1Input = document.getElementById('part1');
+        if (part1Input.value && !part1Input.value.includes(selectedConnector)) {
+          part1Input.value = `${part1Input.value.trim()} ${selectedConnector}`;
+        }
+
+        // Cargar sugerencias
+        await loadSuggestions(selectedConnector);
+      });
+    });
+
+    // Cargar sugerencias
+    async function loadSuggestions(connector) {
+      try {
+        const response = await fetch(`/api/suggestions/${connector}/random?count=5`);
+        const data = await response.json();
+        
+        if (data.success) {
+          const suggestionsContainer = document.getElementById('suggestions-container');
+          const suggestionsList = document.getElementById('suggestions-list');
+          
+          suggestionsList.innerHTML = '';
+          data.data.suggestions.forEach(suggestion => {
+            const chip = document.createElement('span');
+            chip.className = 'suggestion-chip';
+            chip.textContent = suggestion;
+            chip.onclick = () => {
+              document.getElementById('part2').value = suggestion;
+              updatePreview();
+            };
+            suggestionsList.appendChild(chip);
+          });
+          
+          suggestionsContainer.classList.remove('hidden');
+        }
+      } catch (error) {
+        console.error('Error loading suggestions:', error);
+      }
+    }
+
+    // Actualizar preview
+    function updatePreview() {
+      const part1 = document.getElementById('part1').value;
+      const part2 = document.getElementById('part2').value;
+      
+      if (part1 && part2) {
+        document.getElementById('preview-text').textContent = `${part1} ${part2}`;
+        document.getElementById('sentence-preview').classList.remove('hidden');
+      }
+    }
+
+    document.getElementById('part1').addEventListener('input', updatePreview);
+    document.getElementById('part2').addEventListener('input', updatePreview);
+
+    // Enviar oración
+    const sentenceForm = document.getElementById('sentence-form');
+    const feedbackContainer = document.getElementById('feedback-container');
+
+    sentenceForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const part1 = document.getElementById('part1').value.trim();
+      const part2 = document.getElementById('part2').value.trim();
+
+      try {
+        const response = await fetch('/api/practice/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ part1, part2 })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          const feedback = data.data.feedback;
+          
+          if (feedback.isCorrect) {
+            showFeedback('success', `${feedback.message} +${feedback.points} points! 🎉`);
+          } else {
+            showFeedback('error', feedback.message);
+          }
+
+          // Actualizar stats
+          loadStats();
+          
+          // Limpiar formulario después de 2 segundos
+          setTimeout(() => {
+            sentenceForm.reset();
+            document.getElementById('sentence-preview').classList.add('hidden');
+            document.getElementById('suggestions-container').classList.add('hidden');
+            connectorButtons.forEach(b => {
+              b.classList.remove('btn-primary');
+              b.classList.add('btn-outline');
+            });
+          }, 2000);
+
+        } else {
+          showFeedback('error', data.message);
+        }
+
+      } catch (error) {
+        console.error('Error:', error);
+        showFeedback('error', 'Connection error. Please try again.');
+      }
+    });
+
+    function showFeedback(type, message) {
+      const alertClass = type === 'success' ? 'alert-success' : 'alert-error';
+      feedbackContainer.innerHTML = `
+        <div class="alert ${alertClass}">
+          <span>${message}</span>
+        </div>
+      `;
+      
+      // Auto-hide después de 5 segundos
+      setTimeout(() => {
+        feedbackContainer.innerHTML = '';
+      }, 5000);
+    }
+  </script>
+
+</body>
+</html>
