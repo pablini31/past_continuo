@@ -22,11 +22,11 @@ const path = require('path');
 // Importar middlewares personalizados
 const errorMiddleware = require('./middlewares/error.middleware');
 
-// Importar rutas (las crearemos después)
-// const authRoutes = require('./routes/auth.routes');
-// const practiceRoutes = require('./routes/practice.routes');
-// const userRoutes = require('./routes/user.routes');
-// const suggestionRoutes = require('./routes/suggestion.routes');
+// Importar rutas
+const authRoutes = require('./routes/auth.routes');
+const practiceRoutes = require('./routes/practice.routes');
+const userRoutes = require('./routes/user.routes');
+const suggestionRoutes = require('./routes/suggestion.routes');
 
 const app = express();
 
@@ -196,11 +196,11 @@ app.get('/api', (req, res) => {
  * Todas las rutas empiezan con /api
  */
 
-// TODO: Descomentar cuando creemos las rutas
-// app.use('/api/auth', authRoutes);
-// app.use('/api/practice', practiceRoutes);
-// app.use('/api/users', userRoutes);
-// app.use('/api/suggestions', suggestionRoutes);
+// Montar las rutas de la API
+app.use('/api/auth', authRoutes);
+app.use('/api/practice', practiceRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/suggestions', suggestionRoutes);
 
 // ═══════════════════════════════════════════════════
 // ❌ 404 HANDLER

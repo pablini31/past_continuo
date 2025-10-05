@@ -1,6 +1,7 @@
 <!-- views/index.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,21 +9,25 @@
   <link rel="stylesheet" href="/css/styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Fredoka+One:wght@400&display=swap"
+    rel="stylesheet">
 </head>
+
 <body>
-  
+
   <!-- Navbar -->
   <nav class="navbar">
     <div class="container">
       <div class="navbar-content">
         <a href="/" class="navbar-brand">
-          <span>📚</span> Past Continuous Builder
+          PAST CONTINUOUS
         </a>
         <ul class="navbar-menu">
-          <li><a href="/" class="navbar-link">Home</a></li>
+          <li><a href="/" class="navbar-link">Inicio</a></li>
+          <li><a href="/views/practice.html" class="navbar-link">Práctica</a></li>
           <li><a href="/views/login.html" class="navbar-link">Login</a></li>
-          <li><a href="/views/register.html" class="btn btn-primary btn-sm">Get Started</a></li>
+          <li><a href="/views/register.html" class="btn btn-primary btn-sm">Empezar</a></li>
         </ul>
       </div>
     </div>
@@ -31,45 +36,49 @@
   <!-- Hero Section -->
   <section class="hero">
     <div class="container">
-      <h1 class="hero-title fade-in">Master the Past Continuous Tense</h1>
-      <p class="hero-subtitle fade-in">
-        Build perfect sentences, earn points, and level up your English skills!
-      </p>
-      <div class="flex gap-3 justify-center fade-in">
-        <a href="/views/register.html" class="btn btn-lg btn-secondary">Start Learning 🚀</a>
-        <a href="#features" class="btn btn-lg btn-outline">Learn More</a>
+      <div class="hero-content">
+        <h1 class="hero-title fade-in">PAST CONTINUOUS</h1>
+        <div class="hero-character">🎓</div>
+        <p class="hero-subtitle fade-in">
+          ¡Domina el pasado continuo en inglés de forma divertida!
+        </p>
+        <div class="flex gap-3 justify-center fade-in">
+          <a href="/views/register.html" class="btn btn-lg btn-primary">EMPEZAR AHORA</a>
+          <a href="#features" class="btn btn-lg btn-secondary">VER MÁS</a>
+        </div>
       </div>
     </div>
+    <div class="chocolate-waves"></div>
   </section>
 
   <!-- Features Section -->
-  <section id="features" style="padding: 4rem 0;">
+  <section id="features" style="padding: 4rem 0; background: rgba(255, 255, 255, 0.1);">
     <div class="container">
-      <h2 class="text-center mb-5">Why Choose Past Continuous Builder?</h2>
-      
+      <h2 class="text-center mb-5" style="font-size: 2.5rem; font-weight: 900; color: var(--text-cyan); text-shadow: 0 0 20px var(--primary);">¿Por qué elegir Past Continuous?</h2>
+
       <div class="stats-grid">
         <div class="card text-center">
-          <div style="font-size: 3rem; margin-bottom: 1rem;">🎯</div>
-          <h3>Interactive Practice</h3>
-          <p class="text-secondary">Build sentences with real-time suggestions and instant feedback</p>
+          <div style="font-size: 4rem; margin-bottom: 1rem;">🎯</div>
+          <h3 style="color: var(--text-cyan); text-shadow: 0 0 10px var(--primary);">Práctica Interactiva</h3>
+          <p style="color: var(--text-secondary);">Construye oraciones con sugerencias en tiempo real y retroalimentación instantánea</p>
         </div>
-        
+
         <div class="card text-center">
-          <div style="font-size: 3rem; margin-bottom: 1rem;">🎮</div>
-          <h3>Gamification</h3>
-          <p class="text-secondary">Earn points, unlock badges, and compete on the leaderboard</p>
+          <div style="font-size: 4rem; margin-bottom: 1rem;">🎮</div>
+          <h3 style="color: var(--text-cyan); text-shadow: 0 0 10px var(--primary);">Gamificación</h3>
+          <p style="color: var(--text-secondary);">Gana puntos, desbloquea insignias y compite en la tabla de clasificación</p>
         </div>
-        
+
         <div class="card text-center">
-          <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
-          <h3>Track Progress</h3>
-          <p class="text-secondary">See your improvement with detailed statistics and analytics</p>
+          <div style="font-size: 4rem; margin-bottom: 1rem;">📊</div>
+          <h3 style="color: var(--text-cyan); text-shadow: 0 0 10px var(--primary);">Seguimiento</h3>
+          <p style="color: var(--text-secondary);">Ve tu progreso con estadísticas detalladas y análisis completos</p>
         </div>
-        
+
         <div class="card text-center">
-          <div style="font-size: 3rem; margin-bottom: 1rem;">🔥</div>
-          <h3>Daily Streaks</h3>
-          <p class="text-secondary">Build consistent learning habits with streak tracking</p>
+          <div style="font-size: 4rem; margin-bottom: 1rem;">🔥</div>
+          <h3 style="color: var(--text-cyan); text-shadow: 0 0 10px var(--primary);">Rachas Diarias</h3>
+          <p style="color: var(--text-secondary);">Construye hábitos de aprendizaje consistentes con seguimiento de rachas</p>
         </div>
       </div>
     </div>
@@ -79,41 +88,50 @@
   <section style="background: var(--bg-primary); padding: 4rem 0;">
     <div class="container">
       <h2 class="text-center mb-5">How It Works</h2>
-      
+
       <div style="max-width: 600px; margin: 0 auto;">
         <div class="card mb-4">
           <div class="flex gap-3 items-center">
-            <div class="badge badge-primary" style="font-size: 1.5rem; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">1</div>
+            <div class="badge badge-primary"
+              style="font-size: 1.5rem; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+              1</div>
             <div>
               <h4>Write the first part</h4>
-              <p class="text-secondary" style="margin: 0;">Start your sentence using Past Continuous (was/were + verb-ing)</p>
+              <p class="text-secondary" style="margin: 0;">Start your sentence using Past Continuous (was/were +
+                verb-ing)</p>
             </div>
           </div>
         </div>
-        
+
         <div class="card mb-4">
           <div class="flex gap-3 items-center">
-            <div class="badge badge-primary" style="font-size: 1.5rem; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">2</div>
+            <div class="badge badge-primary"
+              style="font-size: 1.5rem; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+              2</div>
             <div>
               <h4>Choose a connector</h4>
               <p class="text-secondary" style="margin: 0;">Use "while", "when", or "as" to connect your ideas</p>
             </div>
           </div>
         </div>
-        
+
         <div class="card mb-4">
           <div class="flex gap-3 items-center">
-            <div class="badge badge-primary" style="font-size: 1.5rem; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">3</div>
+            <div class="badge badge-primary"
+              style="font-size: 1.5rem; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+              3</div>
             <div>
               <h4>Complete the sentence</h4>
               <p class="text-secondary" style="margin: 0;">Pick a suggestion or write your own second part</p>
             </div>
           </div>
         </div>
-        
+
         <div class="card">
           <div class="flex gap-3 items-center">
-            <div class="badge badge-success" style="font-size: 1.5rem; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">✓</div>
+            <div class="badge badge-success"
+              style="font-size: 1.5rem; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+              ✓</div>
             <div>
               <h4>Get instant feedback</h4>
               <p class="text-secondary" style="margin: 0;">Earn points and see your progress in real-time!</p>
@@ -125,11 +143,23 @@
   </section>
 
   <!-- CTA Section -->
-  <section style="padding: 4rem 0; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);">
-    <div class="container text-center" style="color: var(--text-light);">
-      <h2 style="color: var(--text-light); font-size: 2.5rem; margin-bottom: 1rem;">Ready to Start Learning?</h2>
-      <p style="font-size: 1.25rem; margin-bottom: 2rem; opacity: 0.9;">Join thousands of students improving their English today!</p>
-      <a href="/views/register.html" class="btn btn-lg btn-secondary">Create Free Account 🎓</a>
+  <section style="padding: 4rem 0; background: var(--bg-gradient); position: relative;">
+    <div class="container text-center" style="color: var(--text-light); position: relative; z-index: 2;">
+      <h2 style="color: var(--text-cyan); text-shadow: 0 0 20px var(--primary); font-size: 3rem; margin-bottom: 1rem; font-weight: 900;">¿Listo para Empezar?</h2>
+      <p style="font-size: 1.5rem; margin-bottom: 2rem; opacity: 0.95;">¡Únete a miles de estudiantes mejorando su inglés hoy!</p>
+      <a href="/views/register.html" class="btn btn-lg btn-primary">¡Crear Cuenta Gratis!</a>
+    </div>
+    <!-- Partículas decorativas -->
+    <div class="particles">
+      <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+      <div class="particle" style="left: 20%; animation-delay: 1s;"></div>
+      <div class="particle" style="left: 30%; animation-delay: 2s;"></div>
+      <div class="particle" style="left: 40%; animation-delay: 3s;"></div>
+      <div class="particle" style="left: 50%; animation-delay: 4s;"></div>
+      <div class="particle" style="left: 60%; animation-delay: 5s;"></div>
+      <div class="particle" style="left: 70%; animation-delay: 0.5s;"></div>
+      <div class="particle" style="left: 80%; animation-delay: 1.5s;"></div>
+      <div class="particle" style="left: 90%; animation-delay: 2.5s;"></div>
     </div>
   </section>
 
@@ -137,9 +167,10 @@
   <footer style="background: var(--gray-900); color: var(--text-light); padding: 2rem 0; text-align: center;">
     <div class="container">
       <p>&copy; 2025 Past Continuous Builder. Created for English class project.</p>
-      <p style="opacity: 0.7; font-size: 0.875rem;">Made with ❤️ by [Tu Nombre]</p>
+      <p style="opacity: 0.7; font-size: 0.875rem;">Made with ❤️ by César Ley</p>
     </div>
   </footer>
 
 </body>
+
 </html>
