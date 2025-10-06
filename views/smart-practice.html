@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Practice - Past Continuous Builder</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    .smart-practice-container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 2rem;
+    }
+
+    .writing-area {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .main-textarea {
+      width: 100%;
+      min-height: 150px;
+      padding: 1.5rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 1.2rem;
+      line-height: 1.6;
+      resize: vertical;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      transition: border-color 0.3s ease;
+    }
+
+    .main-textarea:focus {
+      outline: none;
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .live-suggestions {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: #f8fafc;
+      border-radius: 8px;
+      border-left: 4px solid #3b82f6;
+      display: none;
+    }
+
+    .suggestion-item {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .suggestion-item:last-child {
+      border-bottom: none;
+    }
+
+    .suggestion-type {
+      font-weight: 600;
+      color: #1e40af;
+      margin-bottom: 0.25rem;
+    }
+
+    .suggestion-text {
+      color: #475569;
+      font-size: 0.9rem;
+    }
+
+    .writing-stats {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: #f1f5f9;
+      border-radius: 8px;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #1e40af;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: #64748b;
+      margin-top: 0.25rem;
+    }
+
+    .grammar-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-left: 0.5rem;
+    }
+
+    .grammar-correct { background-color: #10b981; }
+    .grammar-mixed { background-color: #f59e0b; }
+    .grammar-incorrect { background-color: #ef4444; }
+    .grammar-neutral { background-color: #6b7280; }
+
+    .submit-section {
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    .btn-analyze {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .btn-analyze:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-analyze:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .analysis-result {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .analysis-success {
+      background: #ecfdf5;
+      border: 1px solid #10b981;
+      color: #065f46;
+    }
+
+    .analysis-error {
+      background: #fef2f2;
+      border: 1px solid #ef4444;
+      color: #991b1b;
+    }
+
+    .analysis-mixed {
+      background: #fffbeb;
+      border: 1px solid #f59e0b;
+      color: #92400e;
+    }
+  </style>
+</head>
+<body>
+  
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container">
+      <div class="navbar-content">
+        <a href="/" class="navbar-brand">
+          📚 Past Continuous Builder
+        </a>
+        <ul class="navbar-menu">
+          <li><span class="navbar-link">Welcome, <strong id="username"></strong>!</span></li>
+          <li><a href="#" id="logout-btn" class="btn btn-danger btn-sm">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="smart-practice-container">
+    <div class="writing-area">
+      <h2 style="margin-bottom: 1rem; color: #1e40af;">✨ Smart Writing Practice</h2>
+      <p style="color: #64748b; margin-bottom: 2rem;">
+        Write freely in English using past tenses. I'll help you in real-time! 🚀
+      </p>
+
+      <textarea 
+        id="main-textarea" 
+        class="main-textarea"
+        placeholder="Start writing your story or sentence in English... For example: 'Yesterday I was walking when I saw...' or 'Last night she studied while her brother played...'"
+        autocomplete="off"
+        spellcheck="false"
+      ></textarea>
+
+      <!-- Live Suggestions -->
+      <div id="live-suggestions" class="live-suggestions">
+        <h4 style="margin: 0 0 1rem 0; color: #1e40af;">💡 Real-time Grammar Correction</h4>
+        <div id="suggestions-content"></div>
+      </div>
+
+      <!-- Live Correction Display -->
+      <div id="live-correction" style="display: none; margin-top: 1rem; padding: 1.5rem; background: linear-gradient(135deg, #e8f5e8 0%, #f0f9ff 100%); border: 2px solid #10b981; border-radius: 12px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);">
+        <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+          <span style="color: #059669; font-weight: 700; font-size: 1.1rem; margin-right: 0.5rem;">✨ Suggested Correction:</span>
+        </div>
+        <div id="corrected-text" style="font-size: 1.2rem; color: #065f46; font-weight: 600; line-height: 1.6; padding: 1rem; background: white; border-radius: 8px; border-left: 4px solid #10b981;"></div>
+        <div style="margin-top: 1rem; display: flex; align-items: center; gap: 1rem;">
+          <button id="apply-correction" class="btn" style="background: #10b981; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">Apply Correction ✓</button>
+          <span style="color: #6b7280; font-size: 0.95rem;">or keep typing to dismiss</span>
+        </div>
+      </div>
+
+      <!-- Writing Stats -->
+      <div class="writing-stats">
+        <div class="stat-item">
+          <div class="stat-value" id="word-count">0</div>
+          <div class="stat-label">Words</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="sentence-count">0</div>
+          <div class="stat-label">Sentences</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="tense-detection">
+            Mixed <span class="grammar-indicator grammar-neutral"></span>
+          </div>
+          <div class="stat-label">Grammar</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="confidence-score">0%</div>
+          <div class="stat-label">Confidence</div>
+        </div>
+      </div>
+
+      <!-- Submit Section -->
+      <div class="submit-section">
+        <button id="analyze-btn" class="btn-analyze" disabled>
+          🔍 Analyze My Writing
+        </button>
+      </div>
+
+      <!-- Analysis Result -->
+      <div id="analysis-result" class="analysis-result">
+        <div id="analysis-content"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Verificar autenticación
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+    if (!token) {
+      // Si no está logueado, redirigir al login
+      window.location.href = '/views/login.html?redirect=practice';
+    }
+
+    document.getElementById('username').textContent = user.username || 'User';
+
+    // Logout
+    document.getElementById('logout-btn').addEventListener('click', (e) => {
+      e.preventDefault();
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/views/login.html';
+    });
+
+    // Referencias a elementos
+    const textarea = document.getElementById('main-textarea');
+    const liveSuggestions = document.getElementById('live-suggestions');
+    const suggestionsContent = document.getElementById('suggestions-content');
+    const liveCorrection = document.getElementById('live-correction');
+    const correctedText = document.getElementById('corrected-text');
+    const applyCorrectionBtn = document.getElementById('apply-correction');
+    const analyzeBtn = document.getElementById('analyze-btn');
+    const analysisResult = document.getElementById('analysis-result');
+    const analysisContent = document.getElementById('analysis-content');
+
+    // Referencias a stats
+    const wordCountEl = document.getElementById('word-count');
+    const sentenceCountEl = document.getElementById('sentence-count');
+    const tenseDetectionEl = document.getElementById('tense-detection');
+    const confidenceScoreEl = document.getElementById('confidence-score');
+
+    let analysisTimeout;
+    let lastAnalyzedText = '';
+    let currentCorrection = null;
+
+    // Event listener para aplicar corrección
+    applyCorrectionBtn.addEventListener('click', () => {
+      if (currentCorrection) {
+        textarea.value = currentCorrection;
+        liveCorrection.style.display = 'none';
+        currentCorrection = null;
+        updateBasicStats(textarea.value);
+      }
+    });
+
+    // Event listener para escritura en tiempo real
+    textarea.addEventListener('input', () => {
+      const text = textarea.value.trim();
+      
+      // Actualizar stats básicas
+      updateBasicStats(text);
+      
+      // Habilitar/deshabilitar botón de análisis
+      analyzeBtn.disabled = text.length < 10;
+      
+      // Análisis en tiempo real con debounce
+      clearTimeout(analysisTimeout);
+      if (text.length > 15 && text !== lastAnalyzedText) {
+        analysisTimeout = setTimeout(() => {
+          performLiveAnalysis(text);
+          lastAnalyzedText = text;
+        }, 1000); // Reducido a 1 segundo para más rapidez
+      } else if (text.length <= 15) {
+        hideLiveSuggestions();
+        hideLiveCorrection();
+      }
+    });
+
+    // Actualizar estadísticas básicas
+    function updateBasicStats(text) {
+      const words = text.split(/\s+/).filter(word => word.length > 0);
+      const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+      
+      wordCountEl.textContent = words.length;
+      sentenceCountEl.textContent = sentences.length;
+    }
+
+    // Análisis en tiempo real
+    async function performLiveAnalysis(text) {
+      try {
+        // Primero hacer una corrección local simple para mostrar inmediatamente
+        const quickCorrection = performQuickCorrection(text);
+        if (quickCorrection.hasCorrection) {
+          showLiveCorrection(quickCorrection);
+        }
+
+        const response = await fetch('/api/practice/live-analyze', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ text })
+        });
+
+        if (!response.ok) {
+          throw new Error('Analysis failed');
+        }
+
+        const data = await response.json();
+        console.log('Live analysis response:', data); // Debug log
+        
+        if (data.success) {
+          showLiveSuggestions(data.data.analysis);
+          updateGrammarIndicator(data.data.analysis);
+          
+          // Mostrar corrección del servidor si es mejor que la local
+          if (data.data.analysis.correction && data.data.analysis.correction.hasCorrectionSuggestion) {
+            showLiveCorrection(data.data.analysis.correction);
+          }
+        }
+
+      } catch (error) {
+        console.error('Live analysis error:', error);
+        hideLiveSuggestions();
+        // Mantener la corrección local si falla el servidor
+      }
+    }
+
+    // Función de corrección rápida local
+    function performQuickCorrection(text) {
+      let correctedText = text;
+      let hasCorrection = false;
+
+      // Correcciones simples que siempre funcionan
+      const quickFixes = [
+        { from: /\biam\b/gi, to: 'I am' },
+        { from: /\bhugty\b/gi, to: 'hungry' },
+        { from: /\bwowo\b/gi, to: 'wow' },
+        { from: /\bmi\s+cousin\b/gi, to: 'my cousin' },
+        { from: /\b(I|you|we|they|he|she|it)\s+go\b/gi, to: '$1 went' },
+        { from: /\b(I|you|we|they|he|she|it)\s+see\b/gi, to: '$1 saw' },
+        { from: /\b(I|you|we|they|he|she|it)\s+eat\b/gi, to: '$1 ate' },
+        { from: /\b(I|you|we|they|he|she|it)\s+have\b/gi, to: '$1 had' },
+        { from: /\b(I|you|we|they)\s+are\s+(\w+ing)\b/gi, to: '$1 were $2' },
+        { from: /\b(he|she|it)\s+is\s+(\w+ing)\b/gi, to: '$1 was $2' }
+      ];
+
+      quickFixes.forEach(fix => {
+        const newText = correctedText.replace(fix.from, fix.to);
+        if (newText !== correctedText) {
+          correctedText = newText;
+          hasCorrection = true;
+        }
+      });
+
+      return {
+        hasCorrection,
+        correctedText,
+        hasCorrectionSuggestion: hasCorrection
+      };
+    }
+
+    // Mostrar sugerencias en tiempo real
+    function showLiveSuggestions(analysis) {
+      if (!analysis.suggestions || analysis.suggestions.length === 0) {
+        hideLiveSuggestions();
+        return;
+      }
+
+      let suggestionsHtml = '';
+      
+      analysis.suggestions.forEach(suggestion => {
+        suggestionsHtml += `
+          <div class="suggestion-item">
+            <div class="suggestion-type">${suggestion.type}</div>
+            <div class="suggestion-text">${suggestion.message}</div>
+          </div>
+        `;
+      });
+
+      suggestionsContent.innerHTML = suggestionsHtml;
+      liveSuggestions.style.display = 'block';
+    }
+
+    function hideLiveSuggestions() {
+      liveSuggestions.style.display = 'none';
+    }
+
+    function hideLiveCorrection() {
+      liveCorrection.style.display = 'none';
+      currentCorrection = null;
+    }
+
+    // Mostrar corrección en tiempo real
+    function showLiveCorrection(correction) {
+      console.log('Showing correction:', correction); // Debug log
+      
+      const currentText = textarea.value.trim();
+      let correctedTextToShow = correction.correctedText;
+      
+      // Si no hay corrección específica, usar el texto actual
+      if (!correctedTextToShow || correctedTextToShow === currentText) {
+        hideLiveCorrection();
+        return;
+      }
+      
+      // Mostrar la corrección con formato destacado
+      correctedText.innerHTML = `"${correctedTextToShow}"`;
+      currentCorrection = correctedTextToShow;
+      liveCorrection.style.display = 'block';
+      
+      // Scroll para asegurar que se vea
+      setTimeout(() => {
+        liveCorrection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 100);
+    }
+
+    // Actualizar indicador de gramática
+    function updateGrammarIndicator(analysis) {
+      const indicator = tenseDetectionEl.querySelector('.grammar-indicator');
+      
+      if (analysis.overallCorrect) {
+        tenseDetectionEl.innerHTML = `Excellent <span class="grammar-indicator grammar-correct"></span>`;
+      } else if (analysis.hasCorrectTenses && analysis.hasIncorrectTenses) {
+        tenseDetectionEl.innerHTML = `Mixed <span class="grammar-indicator grammar-mixed"></span>`;
+      } else if (analysis.hasIncorrectTenses) {
+        tenseDetectionEl.innerHTML = `Needs work <span class="grammar-indicator grammar-incorrect"></span>`;
+      } else {
+        tenseDetectionEl.innerHTML = `Keep writing <span class="grammar-indicator grammar-neutral"></span>`;
+      }
+
+      confidenceScoreEl.textContent = `${analysis.confidenceScore || 0}%`;
+    }
+
+    // Análisis completo al hacer clic
+    analyzeBtn.addEventListener('click', async () => {
+      const text = textarea.value.trim();
+      
+      if (text.length < 10) {
+        alert('Please write at least a few words before analyzing.');
+        return;
+      }
+
+      analyzeBtn.disabled = true;
+      analyzeBtn.textContent = '🔍 Analyzing...';
+
+      try {
+        const response = await fetch('/api/practice/full-analyze', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ text })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          showFullAnalysis(data.data);
+        } else {
+          throw new Error(data.message);
+        }
+
+      } catch (error) {
+        console.error('Full analysis error:', error);
+        alert('Analysis failed. Please try again.');
+      } finally {
+        analyzeBtn.disabled = false;
+        analyzeBtn.textContent = '🔍 Analyze My Writing';
+      }
+    });
+
+    // Mostrar análisis completo
+    function showFullAnalysis(data) {
+      const { analysis, points, feedback } = data;
+      
+      let resultClass = 'analysis-success';
+      if (!analysis.overallCorrect) {
+        resultClass = analysis.hasCorrectTenses ? 'analysis-mixed' : 'analysis-error';
+      }
+
+      let contentHtml = `
+        <h3>📊 Analysis Results</h3>
+        <div style="margin: 1rem 0;">
+          <strong>Score:</strong> ${points} points | 
+          <strong>Accuracy:</strong> ${analysis.accuracyPercentage}% |
+          <strong>Sentences analyzed:</strong> ${analysis.totalSentences}
+        </div>
+      `;
+
+      if (feedback.message) {
+        contentHtml += `<div style="margin: 1rem 0;"><strong>Overall:</strong> ${feedback.message}</div>`;
+      }
+
+      if (analysis.detailedFeedback && analysis.detailedFeedback.length > 0) {
+        contentHtml += '<h4>💡 Specific Suggestions:</h4><ul>';
+        analysis.detailedFeedback.forEach(item => {
+          contentHtml += `<li>${item}</li>`;
+        });
+        contentHtml += '</ul>';
+      }
+
+      if (analysis.goodExamples && analysis.goodExamples.length > 0) {
+        contentHtml += '<h4>✅ Great examples you used:</h4><ul>';
+        analysis.goodExamples.forEach(example => {
+          contentHtml += `<li>"${example}"</li>`;
+        });
+        contentHtml += '</ul>';
+      }
+
+      analysisContent.innerHTML = contentHtml;
+      analysisResult.className = `analysis-result ${resultClass}`;
+      analysisResult.style.display = 'block';
+
+      // Scroll to results
+      analysisResult.scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+
+</body>
+</html>

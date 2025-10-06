@@ -17,9 +17,10 @@ const { sentenceValidation } = require('../middlewares/validation.middleware');
 router.use(protect);
 
 router.post('/submit', sentenceValidation, practiceController.submitSentence);
+router.post('/live-analyze', practiceController.liveAnalyze);
+router.post('/full-analyze', practiceController.fullAnalyze);
 router.get('/history', practiceController.getHistory);
 router.get('/stats', practiceController.getStats);
 router.get('/connector-stats', practiceController.getConnectorStats);
-router.get('/top-sentences', practiceController.getTopSentences);
 
 module.exports = router;

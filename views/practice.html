@@ -18,6 +18,7 @@
         </a>
         <ul class="navbar-menu">
           <li><span class="navbar-link" id="user-welcome">Welcome, <strong id="username"></strong>!</span></li>
+          <li><a href="/smart-practice" class="btn btn-primary btn-sm">Try Smart Practice ✨</a></li>
           <li><a href="#" id="logout-btn" class="btn btn-danger btn-sm">Logout</a></li>
         </ul>
       </div>
@@ -27,6 +28,13 @@
   <!-- Stats Section -->
   <section style="background: var(--bg-primary); padding: 2rem 0; box-shadow: var(--shadow);">
     <div class="container">
+      <!-- Nuevo Smart Practice Banner -->
+      <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 1rem; border-radius: 12px; margin-bottom: 2rem; text-align: center;">
+        <h3 style="color: white; margin: 0 0 0.5rem 0;">✨ Try Our New Smart Practice Mode!</h3>
+        <p style="color: rgba(255,255,255,0.9); margin: 0 0 1rem 0;">Write freely with real-time AI suggestions - no more forms!</p>
+        <a href="/smart-practice" class="btn" style="background: white; color: #667eea; font-weight: 600; text-decoration: none; padding: 0.5rem 1.5rem; border-radius: 8px;">Switch to Smart Practice 🚀</a>
+      </div>
+      
       <div class="stats-grid" style="margin: 0;">
         <div class="stat-card" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);">
           <div class="stat-value" id="total-points">0</div>
@@ -62,25 +70,31 @@
       <!-- Formulario de oración -->
       <form id="sentence-form">
         <div class="form-group">
-          <label for="part1" class="form-label">First Part (use Past Continuous)</label>
+          <label for="part1" class="form-label">First Part</label>
           <input 
             type="text" 
             id="part1" 
             class="form-input" 
-            placeholder="I was studying..."
+            placeholder="I was studying... or I studied..."
             required
           >
-          <small class="form-help">Example: "I was cooking", "She was reading"</small>
+          <small class="form-help">Use Past Continuous (was/were + verb-ing) or Past Simple (verb-ed)</small>
         </div>
 
         <div class="form-group">
           <label class="form-label">Choose a Connector</label>
           <div class="flex gap-2">
-            <button type="button" class="btn btn-outline connector-btn" data-connector="while">while</button>
-            <button type="button" class="btn btn-outline connector-btn" data-connector="when">when</button>
-            <button type="button" class="btn btn-outline connector-btn" data-connector="as">as</button>
+            <button type="button" class="btn btn-outline connector-btn" data-connector="while" title="Usually continuous actions">while</button>
+            <button type="button" class="btn btn-outline connector-btn" data-connector="when" title="Can be both simple or continuous">when</button>
+            <button type="button" class="btn btn-outline connector-btn" data-connector="as" title="Usually continuous actions">as</button>
           </div>
           <input type="hidden" id="connector" required>
+        </div>
+
+        <!-- Recomendación contextual -->
+        <div id="recommendation-box" class="hidden" style="background: #e0f2fe; border: 1px solid #0288d1; border-radius: 8px; padding: 1rem; margin: 1rem 0;">
+          <h4 style="color: #0277bd; margin: 0 0 0.5rem 0;">💡 Grammar Tip</h4>
+          <p id="recommendation-text" style="margin: 0; color: #01579b;"></p>
         </div>
 
         <!-- Sugerencias -->
@@ -100,7 +114,7 @@
             placeholder="Select a suggestion or write your own..."
             required
           >
-          <small class="form-help">Example: "my brother was playing videogames"</small>
+          <small class="form-help">Use the appropriate past tense based on context</small>
         </div>
 
         <button type="submit" class="btn btn-primary btn-lg btn-block">
@@ -191,10 +205,36 @@
           part1Input.value = `${part1Input.value.trim()} ${selectedConnector}`;
         }
 
+        // Mostrar recomendación contextual
+        showGrammarRecommendation(selectedConnector);
+
         // Cargar sugerencias
         await loadSuggestions(selectedConnector);
       });
     });
+
+    // Mostrar recomendación gramatical
+    function showGrammarRecommendation(connector) {
+      const recommendationBox = document.getElementById('recommendation-box');
+      const recommendationText = document.getElementById('recommendation-text');
+      
+      let tip = '';
+      
+      switch(connector) {
+        case 'while':
+          tip = '<strong>"While"</strong> usually introduces ongoing actions happening at the same time. Use <strong>Past Continuous</strong> (was/were + verb-ing) for both parts. Example: "I was cooking while she was reading."';
+          break;
+        case 'when':
+          tip = '<strong>"When"</strong> can use both tenses! Use <strong>Past Simple</strong> for quick actions or interruptions (rang, arrived), and <strong>Past Continuous</strong> for ongoing actions (was cooking, were studying).';
+          break;
+        case 'as':
+          tip = '<strong>"As"</strong> typically describes simultaneous ongoing actions. Use <strong>Past Continuous</strong> (was/were + verb-ing) for both parts. Example: "As I was leaving, it was starting to rain."';
+          break;
+      }
+      
+      recommendationText.innerHTML = tip;
+      recommendationBox.classList.remove('hidden');
+    }
 
     // Cargar sugerencias
     async function loadSuggestions(connector) {
@@ -265,24 +305,45 @@
           const feedback = data.data.feedback;
           
           if (feedback.isCorrect) {
-            showFeedback('success', `${feedback.message} +${feedback.points} points! 🎉`);
+            let message = feedback.message;
+            if (feedback.bonusPoints > 0) {
+              message += ` Perfect grammar choice! 🏆`;
+            }
+            showFeedback('success', message);
+            
+            // Mostrar análisis detallado si es correcto
+            if (feedback.analysis) {
+              showDetailedAnalysis(feedback.analysis, 'success');
+            }
           } else {
             showFeedback('error', feedback.message);
+            
+            // Mostrar recomendaciones específicas
+            if (feedback.recommendations && feedback.recommendations.length > 0) {
+              showRecommendations(feedback.recommendations);
+            }
+            
+            // Mostrar análisis detallado
+            if (feedback.analysis) {
+              showDetailedAnalysis(feedback.analysis, 'error');
+            }
           }
 
           // Actualizar stats
           loadStats();
           
-          // Limpiar formulario después de 2 segundos
+          // Limpiar formulario después de 4 segundos para dar tiempo a leer el feedback
           setTimeout(() => {
             sentenceForm.reset();
             document.getElementById('sentence-preview').classList.add('hidden');
             document.getElementById('suggestions-container').classList.add('hidden');
+            document.getElementById('recommendation-box').classList.add('hidden');
             connectorButtons.forEach(b => {
               b.classList.remove('btn-primary');
               b.classList.add('btn-outline');
             });
-          }, 2000);
+            feedbackContainer.innerHTML = '';
+          }, 4000);
 
         } else {
           showFeedback('error', data.message);
@@ -301,11 +362,42 @@
           <span>${message}</span>
         </div>
       `;
+    }
+
+    function showRecommendations(recommendations) {
+      const recommendationsHtml = recommendations.map(rec => `
+        <div class="alert alert-info" style="margin-top: 0.5rem;">
+          <span>${rec}</span>
+        </div>
+      `).join('');
       
-      // Auto-hide después de 5 segundos
-      setTimeout(() => {
-        feedbackContainer.innerHTML = '';
-      }, 5000);
+      feedbackContainer.innerHTML += recommendationsHtml;
+    }
+
+    function showDetailedAnalysis(analysis, type) {
+      const part1Status = analysis.part1Valid ? '✅' : '❌';
+      const part2Status = analysis.part2Valid ? '✅' : '❌';
+      
+      let tenseInfo = '';
+      if (analysis.recommendedTense !== 'either') {
+        const recommendedText = analysis.recommendedTense === 'continuous' ? 'Past Continuous' : 'Past Simple';
+        tenseInfo = `<br><strong>Recommended:</strong> ${recommendedText} - ${analysis.contextReason}`;
+      }
+      
+      const analysisHtml = `
+        <div class="alert alert-info" style="margin-top: 0.5rem; font-size: 0.9em;">
+          <strong>Analysis:</strong><br>
+          First part: ${part1Status} 
+          ${analysis.part1Tenses.hasContinuous ? '(has Continuous)' : ''} 
+          ${analysis.part1Tenses.hasSimple ? '(has Simple)' : ''}<br>
+          Second part: ${part2Status} 
+          ${analysis.part2Tenses.hasContinuous ? '(has Continuous)' : ''} 
+          ${analysis.part2Tenses.hasSimple ? '(has Simple)' : ''}
+          ${tenseInfo}
+        </div>
+      `;
+      
+      feedbackContainer.innerHTML += analysisHtml;
     }
   </script>
 

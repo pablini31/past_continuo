@@ -89,17 +89,40 @@ const getConnectorStats = async (req, res, next) => {
 };
 
 /**
- * 🔝 GET /api/practice/top-sentences
- * Obtener mejores oraciones
+ * � POST /api/practice/live-analyze
+ * Análisis en tiempo real mientras escribe
  */
-const getTopSentences = async (req, res, next) => {
+const liveAnalyze = async (req, res, next) => {
+  try {
+    const { text } = req.body;
+
+    if (!text || text.trim().length < 10) {
+      return success(res, { analysis: { suggestions: [] } }, 'Text too short for analysis');
+    }
+
+    const analysis = practiceService.performLiveAnalysis(text);
+    return success(res, { analysis }, 'Live analysis completed');
+
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * 📊 POST /api/practice/full-analyze
+ * Análisis completo y puntuación
+ */
+const fullAnalyze = async (req, res, next) => {
   try {
     const userId = req.userId;
-    const limit = parseInt(req.query.limit) || 5;
+    const { text } = req.body;
 
-    const sentences = practiceService.getTopSentences(userId, limit);
+    if (!text || text.trim().length < 10) {
+      return error(res, 'Text is too short for analysis', HTTP_STATUS.BAD_REQUEST);
+    }
 
-    return success(res, { sentences }, 'Top sentences retrieved successfully');
+    const result = await practiceService.performFullAnalysis(userId, text);
+    return success(res, result, 'Full analysis completed', HTTP_STATUS.CREATED);
 
   } catch (err) {
     next(err);
@@ -111,5 +134,6 @@ module.exports = {
   getHistory,
   getStats,
   getConnectorStats,
-  getTopSentences
+  liveAnalyze,
+  fullAnalyze
 };

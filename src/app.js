@@ -129,7 +129,11 @@ app.get('/register', (req, res) => {
 });
 
 app.get('/practice', (req, res) => {
-  res.redirect('/views/practice.html');
+  res.redirect('/smart-practice');
+});
+
+app.get('/smart-practice', (req, res) => {
+  res.redirect('/views/smart-practice.html');
 });
 
 // ═══════════════════════════════════════════════════

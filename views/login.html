@@ -108,9 +108,17 @@
 
           showAlert('success', 'Login successful! Redirecting...');
 
-          // Redirigir a practice
+          // Verificar si hay parámetro de redirección
+          const urlParams = new URLSearchParams(window.location.search);
+          const redirect = urlParams.get('redirect');
+          
+          // Redirigir según el parámetro o por defecto a practice
           setTimeout(() => {
-            window.location.href = '/views/practice.html';
+            if (redirect === 'smart-practice' || redirect === 'practice') {
+              window.location.href = '/practice';
+            } else {
+              window.location.href = '/practice';
+            }
           }, 1500);
 
         } else {

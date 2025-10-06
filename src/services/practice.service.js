@@ -14,7 +14,9 @@
 
 const { mockSentences, mockProgress } = require('../utils/mockData');
 const { 
-  validatePastContinuous, 
+  validateSentenceWithRecommendation,
+  validatePastContinuous,
+  validatePastSimple,
   detectConnector,
   validateLength,
   sanitizeSentence
@@ -53,22 +55,39 @@ const submitSentence = async (userId, sentenceData) => {
     };
   }
 
-  // 4. Validar que use Past Continuous
-  const isPart1Valid = validatePastContinuous(cleanPart1);
-  const isPart2Valid = validatePastContinuous(cleanPart2);
+  // 4. Validar oraciones completas con recomendaciones
+  const analysis = validateSentenceWithRecommendation(cleanPart1, cleanPart2, connector);
 
-  const isCorrect = isPart1Valid && isPart2Valid;
-  const isPerfectGrammar = isCorrect; // Por ahora, simplificado
+  const isCorrect = analysis.overallValid;
+  const isPerfectGrammar = analysis.part1.isValid && analysis.part2.isValid;
 
-  // 5. Calcular puntos
+  // 5. Calcular puntos (bonus por usar el tiempo recomendado)
   const currentProgress = mockProgress[userId];
   const currentStreak = currentProgress?.streak || 0;
   
-  const points = gamificationService.calculatePoints(
+  let basePoints = gamificationService.calculatePoints(
     isCorrect,
     isPerfectGrammar,
     currentStreak
   );
+
+  // Bonus por seguir recomendaciones
+  let bonusPoints = 0;
+  if (isCorrect && analysis.context.recommendation !== 'either') {
+    const part1FollowsRecommendation = 
+      (analysis.context.recommendation === 'continuous' && analysis.part1.hasContinuous) ||
+      (analysis.context.recommendation === 'simple' && analysis.part1.hasSimple);
+    
+    const part2FollowsRecommendation = 
+      (analysis.context.recommendation === 'continuous' && analysis.part2.hasContinuous) ||
+      (analysis.context.recommendation === 'simple' && analysis.part2.hasSimple);
+    
+    if (part1FollowsRecommendation && part2FollowsRecommendation) {
+      bonusPoints = 5; // Bonus por usar el tiempo recomendado
+    }
+  }
+
+  const totalPoints = basePoints + bonusPoints;
 
   // 6. Crear registro de oración
   const newSentence = {
@@ -79,7 +98,9 @@ const submitSentence = async (userId, sentenceData) => {
     part2: cleanPart2,
     isCorrect,
     isPerfectGrammar,
-    points,
+    points: totalPoints,
+    bonusPoints,
+    analysis,
     createdAt: new Date()
   };
 
@@ -89,21 +110,59 @@ const submitSentence = async (userId, sentenceData) => {
   // 8. Actualizar progreso del usuario
   const progressUpdate = gamificationService.updateUserProgress(
     userId,
-    points,
+    totalPoints,
     isCorrect
   );
 
-  // 9. Preparar feedback
+  // 9. Preparar feedback detallado
+  let feedbackMessage = '';
+  let recommendations = [];
+
+  if (isCorrect) {
+    feedbackMessage = '🎉 Excellent! Your sentence uses correct past tenses!';
+    if (bonusPoints > 0) {
+      feedbackMessage += ` Bonus +${bonusPoints} points for following the recommended tense!`;
+    }
+  } else {
+    feedbackMessage = '❌ Check your verb tenses! ';
+    
+    if (!analysis.part1.isValid) {
+      recommendations.push('First part needs a proper past tense (Simple or Continuous)');
+    }
+    if (!analysis.part2.isValid) {
+      recommendations.push('Second part needs a proper past tense (Simple or Continuous)');
+    }
+  }
+
+  // Agregar recomendaciones contextuales
+  if (analysis.context.recommendation !== 'either') {
+    const recommendedTenseText = analysis.context.recommendation === 'continuous' 
+      ? 'Past Continuous (was/were + verb-ing)' 
+      : 'Past Simple (verb-ed or irregular)';
+    
+    recommendations.push(`💡 Tip: ${analysis.context.reason} Consider using ${recommendedTenseText}.`);
+  }
+
   const feedback = {
     isCorrect,
-    points,
-    message: isCorrect 
-      ? '🎉 Perfect! Great use of Past Continuous!' 
-      : '❌ Try again! Make sure both parts use Past Continuous (was/were + verb-ing)',
-    details: {
-      part1Valid: isPart1Valid,
-      part2Valid: isPart2Valid,
-      connectorUsed: connector
+    points: totalPoints,
+    bonusPoints,
+    message: feedbackMessage,
+    recommendations,
+    analysis: {
+      part1Valid: analysis.part1.isValid,
+      part2Valid: analysis.part2.isValid,
+      connectorUsed: connector,
+      recommendedTense: analysis.context.recommendation,
+      contextReason: analysis.context.reason,
+      part1Tenses: {
+        hasContinuous: analysis.part1.hasContinuous,
+        hasSimple: analysis.part1.hasSimple
+      },
+      part2Tenses: {
+        hasContinuous: analysis.part2.hasContinuous,
+        hasSimple: analysis.part2.hasSimple
+      }
     }
   };
 
@@ -226,10 +285,516 @@ const getTopSentences = (userId, limit = 5) => {
   }));
 };
 
+/**
+ * � GENERAR CORRECCIÓN AUTOMÁTICA
+ * Corrige automáticamente errores de tiempo verbal
+ */
+const generateCorrection = (text) => {
+  let correctedText = text;
+  let hasCorrectionSuggestion = false;
+  let corrections = [];
+
+  // Patrones comunes de errores y sus correcciones
+  const corrections_patterns = [
+    // Corregir "I am + verbing" a "I was + verbing" (past continuous)
+    {
+      pattern: /\b(I|you|we|they)\s+am\s+(\w+ing)\b/gi,
+      replacement: '$1 was $2',
+      explanation: 'Past Continuous: Use "was/were" instead of "am/is/are"'
+    },
+    {
+      pattern: /\b(I|you|we|they)\s+are\s+(\w+ing)\b/gi,
+      replacement: '$1 were $2',
+      explanation: 'Past Continuous: Use "were" for past tense'
+    },
+    {
+      pattern: /\b(he|she|it)\s+is\s+(\w+ing)\b/gi,
+      replacement: '$1 was $2',
+      explanation: 'Past Continuous: Use "was" for past tense'
+    },
+    
+    // Corregir verbos en presente a pasado simple - comunes
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(go|goes)\b/gi,
+      replacement: '$1 went',
+      explanation: 'Past Simple: "go" becomes "went"'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(see|sees)\b/gi,
+      replacement: '$1 saw',
+      explanation: 'Past Simple: "see" becomes "saw"'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(eat|eats)\b/gi,
+      replacement: '$1 ate',
+      explanation: 'Past Simple: "eat" becomes "ate"'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(take|takes)\b/gi,
+      replacement: '$1 took',
+      explanation: 'Past Simple: "take" becomes "took"'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(make|makes)\b/gi,
+      replacement: '$1 made',
+      explanation: 'Past Simple: "make" becomes "made"'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(come|comes)\b/gi,
+      replacement: '$1 came',
+      explanation: 'Past Simple: "come" becomes "came"'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(have|has)\b/gi,
+      replacement: '$1 had',
+      explanation: 'Past Simple: "have/has" becomes "had"'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(do|does)\b/gi,
+      replacement: '$1 did',
+      explanation: 'Past Simple: "do/does" becomes "did"'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(get|gets)\b/gi,
+      replacement: '$1 got',
+      explanation: 'Past Simple: "get" becomes "got"'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(think|thinks)\b/gi,
+      replacement: '$1 thought',
+      explanation: 'Past Simple: "think" becomes "thought"'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(know|knows)\b/gi,
+      replacement: '$1 knew',
+      explanation: 'Past Simple: "know" becomes "knew"'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(say|says)\b/gi,
+      replacement: '$1 said',
+      explanation: 'Past Simple: "say" becomes "said"'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(tell|tells)\b/gi,
+      replacement: '$1 told',
+      explanation: 'Past Simple: "tell" becomes "told"'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(give|gives)\b/gi,
+      replacement: '$1 gave',
+      explanation: 'Past Simple: "give" becomes "gave"'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(find|finds)\b/gi,
+      replacement: '$1 found',
+      explanation: 'Past Simple: "find" becomes "found"'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(feel|feels)\b/gi,
+      replacement: '$1 felt',
+      explanation: 'Past Simple: "feel" becomes "felt"'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(buy|buys)\b/gi,
+      replacement: '$1 bought',
+      explanation: 'Past Simple: "buy" becomes "bought"'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(run|runs)\b/gi,
+      replacement: '$1 ran',
+      explanation: 'Past Simple: "run" becomes "ran"'
+    },
+    
+    // Corregir verbos regulares en presente a pasado
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(work|works)\b/gi,
+      replacement: '$1 worked',
+      explanation: 'Past Simple: Add "-ed" to regular verbs'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(play|plays)\b/gi,
+      replacement: '$1 played',
+      explanation: 'Past Simple: Add "-ed" to regular verbs'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(study|studies)\b/gi,
+      replacement: '$1 studied',
+      explanation: 'Past Simple: "study" becomes "studied"'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(walk|walks)\b/gi,
+      replacement: '$1 walked',
+      explanation: 'Past Simple: Add "-ed" to regular verbs'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(talk|talks)\b/gi,
+      replacement: '$1 talked',
+      explanation: 'Past Simple: Add "-ed" to regular verbs'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(watch|watches)\b/gi,
+      replacement: '$1 watched',
+      explanation: 'Past Simple: Add "-ed" to regular verbs'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(cook|cooks)\b/gi,
+      replacement: '$1 cooked',
+      explanation: 'Past Simple: Add "-ed" to regular verbs'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(live|lives)\b/gi,
+      replacement: '$1 lived',
+      explanation: 'Past Simple: Add "-ed" to regular verbs'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(help|helps)\b/gi,
+      replacement: '$1 helped',
+      explanation: 'Past Simple: Add "-ed" to regular verbs'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(listen|listens)\b/gi,
+      replacement: '$1 listened',
+      explanation: 'Past Simple: Add "-ed" to regular verbs'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(call|calls)\b/gi,
+      replacement: '$1 called',
+      explanation: 'Past Simple: Add "-ed" to regular verbs'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(visit|visits)\b/gi,
+      replacement: '$1 visited',
+      explanation: 'Past Simple: Add "-ed" to regular verbs'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(learn|learns)\b/gi,
+      replacement: '$1 learned',
+      explanation: 'Past Simple: Add "-ed" to regular verbs'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(start|starts)\b/gi,
+      replacement: '$1 started',
+      explanation: 'Past Simple: Add "-ed" to regular verbs'
+    },
+    {
+      pattern: /\b(I|you|we|they|he|she|it)\s+(finish|finishes)\b/gi,
+      replacement: '$1 finished',
+      explanation: 'Past Simple: Add "-ed" to regular verbs'
+    },
+
+    // Casos especiales y errores comunes
+    {
+      pattern: /\byesterday\s+(I|you|we|they|he|she|it)\s+(am|is|are)\b/gi,
+      replacement: 'yesterday $1 was',
+      explanation: 'Past Simple: Use "was/were" with time expressions like "yesterday"'
+    },
+    {
+      pattern: /\blast\s+(week|month|year|night)\s+(I|you|we|they|he|she|it)\s+(am|is|are)\b/gi,
+      replacement: 'last $1 $2 was',
+      explanation: 'Past Simple: Use "was/were" with "last week/month/year"'
+    },
+    
+    // Correcciones de errores de ortografía comunes
+    {
+      pattern: /\biam\b/gi,
+      replacement: 'I am',
+      explanation: 'Spelling: "iam" should be "I am"'
+    },
+    {
+      pattern: /\bhugty\b/gi,
+      replacement: 'hungry',
+      explanation: 'Spelling: "hugty" should be "hungry"'
+    },
+    {
+      pattern: /\bstudying\s+a\s+simple\s+watching\b/gi,
+      replacement: 'studying and watching',
+      explanation: 'Grammar: Better phrasing for activities'
+    },
+    {
+      pattern: /\bwowo\b/gi,
+      replacement: 'wow',
+      explanation: 'Spelling: "wowo" should be "wow"'
+    },
+    {
+      pattern: /\bmi\s+cousin\b/gi,
+      replacement: 'my cousin',
+      explanation: 'Grammar: "mi" should be "my" in English'
+    },
+    
+    // Correcciones más específicas para tiempo verbal
+    {
+      pattern: /\bI\s+am\s+(very\s+\w+)\s+/gi,
+      replacement: 'I was $1 ',
+      explanation: 'Past tense: Use "I was" for past descriptions'
+    }
+  ];
+
+  // Aplicar correcciones
+  corrections_patterns.forEach(pattern => {
+    if (pattern.pattern.test(correctedText)) {
+      const beforeCorrection = correctedText;
+      correctedText = correctedText.replace(pattern.pattern, pattern.replacement);
+      
+      // Solo marcar como corrección si realmente cambió algo
+      if (beforeCorrection !== correctedText) {
+        corrections.push(pattern.explanation);
+        hasCorrectionSuggestion = true;
+      }
+    }
+  });
+
+  // Verificar si realmente hay cambios significativos
+  const originalClean = text.trim().toLowerCase();
+  const correctedClean = correctedText.trim().toLowerCase();
+  
+  if (originalClean === correctedClean) {
+    hasCorrectionSuggestion = false;
+  }
+
+  return {
+    hasCorrectionSuggestion,
+    correctedText: hasCorrectionSuggestion ? correctedText : text,
+    corrections,
+    originalText: text
+  };
+};
+/**
+ * 🔍 ANÁLISIS EN TIEMPO REAL
+ * Analiza el texto mientras el usuario escribe
+ */
+const performLiveAnalysis = (text) => {
+  const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 5);
+  const suggestions = [];
+  
+  let hasCorrectTenses = false;
+  let hasIncorrectTenses = false;
+  let overallCorrect = true;
+
+  // Generar corrección automática
+  const correction = generateCorrection(text);
+
+  // Analizar cada oración
+  sentences.forEach((sentence, index) => {
+    const cleanSentence = sanitizeSentence(sentence);
+    if (cleanSentence.length < 5) return;
+
+    const hasContinuous = validatePastContinuous(cleanSentence);
+    const hasSimple = validatePastSimple(cleanSentence);
+    const hasValidTense = hasContinuous || hasSimple;
+
+    if (hasValidTense) {
+      hasCorrectTenses = true;
+    } else {
+      hasIncorrectTenses = true;
+      overallCorrect = false;
+      
+      suggestions.push({
+        type: '⚠️ Grammar Check',
+        message: `Sentence ${index + 1}: Consider using Past Simple (walked, studied) or Past Continuous (was walking, were studying).`
+      });
+    }
+
+    // Detectar conectores y dar consejos específicos
+    const connector = detectConnector(cleanSentence);
+    if (connector) {
+      if (connector === 'while' && !hasContinuous) {
+        suggestions.push({
+          type: '💡 Style Tip',
+          message: `With "${connector}", Past Continuous often works better to show ongoing actions.`
+        });
+      } else if (connector === 'when' && !hasSimple && !hasContinuous) {
+        suggestions.push({
+          type: '💡 Grammar Tip',
+          message: `With "${connector}", you can use Past Simple for quick actions or Past Continuous for ongoing ones.`
+        });
+      }
+    }
+  });
+
+  // Sugerencias generales basadas en el análisis
+  if (sentences.length > 0 && !hasCorrectTenses && !hasIncorrectTenses) {
+    suggestions.push({
+      type: '🎯 Getting Started',
+      message: 'Try writing about past events using "was/were + verb-ing" or simple past verbs like "walked", "studied", "happened".'
+    });
+  }
+
+  if (hasCorrectTenses && !hasIncorrectTenses && sentences.length >= 2) {
+    suggestions.push({
+      type: '🎉 Great Job!',
+      message: 'Excellent use of past tenses! Your grammar is on point.'
+    });
+  }
+
+  // Calcular puntuación de confianza
+  const totalSentences = sentences.length || 1;
+  const correctSentences = sentences.filter(s => {
+    const clean = sanitizeSentence(s);
+    return validatePastContinuous(clean) || validatePastSimple(clean);
+  }).length;
+  
+  const confidenceScore = Math.round((correctSentences / totalSentences) * 100);
+
+  return {
+    suggestions,
+    hasCorrectTenses,
+    hasIncorrectTenses,
+    overallCorrect,
+    confidenceScore,
+    sentenceCount: sentences.length,
+    wordCount: text.split(/\s+/).filter(w => w.length > 0).length,
+    correction // Incluir la corrección en el resultado
+  };
+};
+
+/**
+ * 📊 ANÁLISIS COMPLETO Y PUNTUACIÓN
+ * Análisis detallado con puntos y feedback
+ */
+const performFullAnalysis = async (userId, text) => {
+  const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 5);
+  const detailedFeedback = [];
+  const goodExamples = [];
+  
+  let totalPoints = 0;
+  let correctSentences = 0;
+  let analysisDetails = [];
+
+  // Analizar cada oración en detalle
+  sentences.forEach((sentence, index) => {
+    const cleanSentence = sanitizeSentence(sentence);
+    if (cleanSentence.length < 5) return;
+
+    const hasContinuous = validatePastContinuous(cleanSentence);
+    const hasSimple = validatePastSimple(cleanSentence);
+    const isCorrect = hasContinuous || hasSimple;
+    
+    let sentencePoints = 0;
+    
+    if (isCorrect) {
+      correctSentences++;
+      sentencePoints = 10;
+      
+      // Bonus por usar ambos tiempos apropiadamente
+      if (hasContinuous && hasSimple) {
+        sentencePoints += 5;
+        goodExamples.push(cleanSentence);
+        detailedFeedback.push(`Sentence ${index + 1}: Excellent mix of both tenses! +15 points`);
+      } else if (hasContinuous) {
+        goodExamples.push(cleanSentence);
+        detailedFeedback.push(`Sentence ${index + 1}: Great use of Past Continuous! +10 points`);
+      } else if (hasSimple) {
+        goodExamples.push(cleanSentence);
+        detailedFeedback.push(`Sentence ${index + 1}: Perfect Past Simple usage! +10 points`);
+      }
+    } else {
+      detailedFeedback.push(`Sentence ${index + 1}: Try using past tenses (was/were + verb-ing or past verbs like walked, studied).`);
+    }
+
+    totalPoints += sentencePoints;
+    
+    analysisDetails.push({
+      sentence: cleanSentence,
+      isCorrect,
+      hasContinuous,
+      hasSimple,
+      points: sentencePoints
+    });
+  });
+
+  // Bonus por longitud y creatividad
+  const wordCount = text.split(/\s+/).filter(w => w.length > 0).length;
+  if (wordCount > 50) {
+    totalPoints += 10;
+    detailedFeedback.push("Bonus: +10 points for writing a substantial text!");
+  }
+
+  // Bonus por usar múltiples conectores
+  const connectors = ['while', 'when', 'as'];
+  const connectorsUsed = connectors.filter(c => text.toLowerCase().includes(c));
+  if (connectorsUsed.length > 1) {
+    totalPoints += 5;
+    detailedFeedback.push(`Bonus: +5 points for using multiple connectors (${connectorsUsed.join(', ')})!`);
+  }
+
+  const accuracyPercentage = sentences.length > 0 ? Math.round((correctSentences / sentences.length) * 100) : 0;
+  
+  // Crear registro para el progreso
+  const practiceRecord = {
+    id: mockSentences.length + 1,
+    userId,
+    text,
+    totalSentences: sentences.length,
+    correctSentences,
+    accuracy: accuracyPercentage,
+    points: totalPoints,
+    analysisDetails,
+    createdAt: new Date()
+  };
+  
+  // Guardar en el historial (adaptamos el formato existente)
+  mockSentences.push({
+    id: practiceRecord.id,
+    userId,
+    part1: text.substring(0, 100), // Primeros 100 caracteres
+    connector: connectorsUsed[0] || 'free-writing',
+    part2: text.length > 100 ? text.substring(100, 200) : '',
+    isCorrect: accuracyPercentage >= 70,
+    points: totalPoints,
+    createdAt: new Date()
+  });
+
+  // Actualizar progreso del usuario
+  const progressUpdate = gamificationService.updateUserProgress(
+    userId,
+    totalPoints,
+    accuracyPercentage >= 70
+  );
+
+  // Preparar feedback final
+  let overallMessage = '';
+  if (accuracyPercentage >= 90) {
+    overallMessage = '🏆 Outstanding! Your English past tenses are excellent!';
+  } else if (accuracyPercentage >= 70) {
+    overallMessage = '👍 Great job! Your grammar is quite good with room for improvement.';
+  } else if (accuracyPercentage >= 50) {
+    overallMessage = '📚 Good effort! Keep practicing to improve your past tense usage.';
+  } else {
+    overallMessage = '💪 Keep practicing! Focus on using "was/were + verb-ing" and simple past verbs.';
+  }
+
+  const analysis = {
+    totalSentences: sentences.length,
+    correctSentences,
+    accuracyPercentage,
+    overallCorrect: accuracyPercentage >= 70,
+    hasCorrectTenses: correctSentences > 0,
+    hasIncorrectTenses: correctSentences < sentences.length,
+    detailedFeedback,
+    goodExamples,
+    confidenceScore: accuracyPercentage
+  };
+
+  const feedback = {
+    message: overallMessage,
+    recommendations: detailedFeedback
+  };
+
+  return {
+    analysis,
+    points: totalPoints,
+    feedback,
+    progress: progressUpdate.progress,
+    newBadges: progressUpdate.newBadges
+  };
+};
+
 module.exports = {
   submitSentence,
   getSentenceHistory,
   getUserStats,
   getConnectorStats,
-  getTopSentences
+  performLiveAnalysis,
+  performFullAnalysis,
+  generateCorrection
 };
