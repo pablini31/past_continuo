@@ -19,19 +19,6 @@ Una aplicación web interactiva para practicar los tiempos pasados en inglés (P
 - **Puntuación en tiempo real** con contadores de palabras y oraciones
 - **Feedback detallado** al finalizar con ejemplos específicos
 
-## 🎮 Dos Modos de Práctica
-
-### 🆕 Smart Practice Mode
-- Escritura libre con análisis en tiempo real
-- Detección automática de tiempos verbales
-- Sugerencias contextuales dinámicas
-- Perfecto para escritura natural y creativa
-
-### 📝 Classic Mode  
-- Estructura guiada (parte 1 + conector + parte 2)
-- Sugerencias predefinidas
-- Enfoque en construcción de oraciones específicas
-
 ## 🚀 Cómo Usar Smart Practice
 
 1. **Navega a Smart Practice** desde la página principal

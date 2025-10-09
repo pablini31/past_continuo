@@ -48,9 +48,10 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"], // Permite CSS inline
+      styleSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com", "https://fonts.googleapis.com"], // Permite CSS inline, Font Awesome CDN y Google Fonts
       scriptSrc: ["'self'", "'unsafe-inline'"], // Permite JS inline (cambiar en producción)
       imgSrc: ["'self'", "data:", "https:"],
+      fontSrc: ["'self'", "https://cdnjs.cloudflare.com", "https://fonts.gstatic.com"], // Permite fuentes de Font Awesome y Google Fonts
     },
   },
 }));

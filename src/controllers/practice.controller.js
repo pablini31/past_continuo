@@ -89,22 +89,44 @@ const getConnectorStats = async (req, res, next) => {
 };
 
 /**
- * � POST /api/practice/live-analyze
+ * 🔍 POST /api/practice/live-analyze
  * Análisis en tiempo real mientras escribe
  */
 const liveAnalyze = async (req, res, next) => {
   try {
     const { text } = req.body;
 
-    if (!text || text.trim().length < 10) {
-      return success(res, { analysis: { suggestions: [] } }, 'Text too short for analysis');
+    if (!text || text.trim().length < 5) {
+      return success(res, { 
+        analysis: { 
+          quick: { suggestions: [], errors: [], tips: [] },
+          detailed: { spellProblems: [], semanticIssues: [] }
+        } 
+      }, 'Text too short for analysis');
     }
 
-    const analysis = practiceService.performLiveAnalysis(text);
-    return success(res, { analysis }, 'Live analysis completed');
+    const analyzeService = require('../services/analyze.service');
+    const analysis = await analyzeService.analyzeText(text);
+    
+    // combine with existing quick analysis from practice service for grammar-focused feedback
+    const quick = practiceService.performLiveAnalysis(text);
+    
+    return success(res, { 
+      analysis: { 
+        quick, 
+        detailed: analysis 
+      } 
+    }, 'Live analysis completed');
 
   } catch (err) {
-    next(err);
+    console.error('Live analyze error:', err);
+    // Return graceful fallback instead of error
+    return success(res, { 
+      analysis: { 
+        quick: { suggestions: [], errors: [], tips: [] },
+        detailed: { spellProblems: [], semanticIssues: [] }
+      } 
+    }, 'Analysis completed with limitations');
   }
 };
 
@@ -121,8 +143,15 @@ const fullAnalyze = async (req, res, next) => {
       return error(res, 'Text is too short for analysis', HTTP_STATUS.BAD_REQUEST);
     }
 
-    const result = await practiceService.performFullAnalysis(userId, text);
-    return success(res, result, 'Full analysis completed', HTTP_STATUS.CREATED);
+  const analyzeService = require('../services/analyze.service');
+  const analysis = await analyzeService.analyzeText(text);
+  // store or compute gamified scoring using existing practice service
+  const result = await practiceService.performFullAnalysis(userId, text);
+  // attach spell/semantic details
+  result.analysis = result.analysis || {};
+  result.analysis.spellProblems = analysis.spellProblems;
+  result.analysis.semanticIssues = analysis.semanticIssues;
+  return success(res, result, 'Full analysis completed', HTTP_STATUS.CREATED);
 
   } catch (err) {
     next(err);

@@ -114,10 +114,19 @@ const generateToken = (userId) => {
     userId,
     iat: Math.floor(Date.now() / 1000) // Issued at
   };
+  // Ensure JWT secret is configured
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    // Throw a descriptive error so the server startup or request shows a clear message
+    throw {
+      statusCode: 500,
+      message: 'JWT_SECRET is not configured. Please set JWT_SECRET in your .env file or environment variables.'
+    };
+  }
 
   const token = jwt.sign(
     payload,
-    process.env.JWT_SECRET,
+    secret,
     {
       expiresIn: process.env.JWT_EXPIRES_IN || '7d'
     }

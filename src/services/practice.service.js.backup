@@ -304,24 +304,6 @@ const generateCorrection = (text) => {
 
   // Patrones comunes de errores y sus correcciones
   const corrections_patterns = [
-    // Corrección específica para "I visiting" 
-    {
-      pattern: /\bI\s+visiting\b/gi,
-      replacement: 'I was visiting',
-      explanation: 'Use "I was visiting" for Past Continuous'
-    },
-    // Corregir palabras en español mezcladas
-    {
-      pattern: /\bespañol\b/gi,
-      replacement: 'Spanish',
-      explanation: 'Write everything in English: "español" = "Spanish"'
-    },
-    // Corregir "was a walk" 
-    {
-      pattern: /\bwas\s+a\s+walk\b/gi,
-      replacement: 'took a walk',
-      explanation: 'Use "took a walk" or "went for a walk"'
-    },
     // Corregir "I am + verbing" a "I was + verbing" (past continuous)
     {
       pattern: /\b(I|you|we|they)\s+am\s+(\w+ing)\b/gi,
@@ -588,24 +570,40 @@ const generateCorrection = (text) => {
  * 🔍 ANÁLISIS EN TIEMPO REAL CON FEEDBACK EN ESPAÑOL
  * Analiza el texto mientras el usuario escribe
  */
-const performLiveAnalysis = (text) => {
-  const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 5);
-  const suggestions = [];
-  const errors = [];
-  const tips = [];
+const spellService = require('./spell.service');
   
   let hasCorrectTenses = false;
   let hasIncorrectTenses = false;
-  let overallCorrect = false; // Start with false, require proof of correctness
-  let totalValidSentences = 0;
+  let overallCorrect = false; // Start with false, must prove correctness
 
   // Generar corrección automática
   const correction = generateCorrection(text);
 
-  // Analizar cada oración
+  // Detección más estricta de errores
+  let totalValidSentences = 0;
+  let totalSentences = sentences.length || 1;
+
+  // Analizar cada oración con más rigor
   sentences.forEach((sentence, index) => {
     const cleanSentence = sanitizeSentence(sentence);
     if (cleanSentence.length < 5) return;
+
+    // Verificar errores obvios primero
+    const hasObviousErrors = checkObviousErrors(cleanSentence);
+    
+    if (hasObviousErrors.length > 0) {
+      hasIncorrectTenses = true;
+      hasObviousErrors.forEach(error => {
+        errors.push({
+          type: 'grammar_error',
+          message: error.message,
+          explanation: error.explanation,
+          sentence: cleanSentence,
+          index: index + 1
+        });
+      });
+      return; // Skip further validation for this sentence
+    }
 
     const hasContinuous = validatePastContinuous(cleanSentence);
     const hasSimple = validatePastSimple(cleanSentence);
@@ -634,7 +632,6 @@ const performLiveAnalysis = (text) => {
       }
     } else {
       hasIncorrectTenses = true;
-      overallCorrect = false;
       
       // Detectar tipo específico de error
       let errorType = 'general_grammar';
@@ -651,34 +648,10 @@ const performLiveAnalysis = (text) => {
         errorContext.missing = 'ing';
       }
       // Detectar verbos en presente simple
-      else if (/\b(go|see|eat|have|do|get|think|know|say|tell|give|find|feel|buy|run|work|play|study|walk|talk|watch|cook|live|help|listen|call|visit|learn|start|finish|visiting)\b/i.test(cleanSentence)) {
+      else if (/\b(go|see|eat|have|do|get|think|know|say|tell|give|find|feel|buy|run|work|play|study|walk|talk|watch|cook|live|help|listen|call|visit|learn|start|finish)\b/i.test(cleanSentence)) {
         errorType = 'present_verb_in_past';
-        const presentVerb = cleanSentence.match(/\b(go|see|eat|have|do|get|think|know|say|tell|give|find|feel|buy|run|work|play|study|walk|talk|watch|cook|live|help|listen|call|visit|learn|start|finish|visiting)\b/i)[0];
+        const presentVerb = cleanSentence.match(/\b(go|see|eat|have|do|get|think|know|say|tell|give|find|feel|buy|run|work|play|study|walk|talk|watch|cook|live|help|listen|call|visit|learn|start|finish)\b/i)[0];
         errorContext.presentVerb = presentVerb;
-      }
-      // Detectar errores de estructura específicos
-      else if (/\bI\s+visiting\b/i.test(cleanSentence)) {
-        errorType = 'incorrect_structure';
-        errorContext.problem = 'I visiting es incorrecto. Usa "I was visiting" o "I visited"';
-      }
-      // Detectar mezcla de idiomas
-      else if (/español|casa|tiempo|familia/i.test(cleanSentence)) {
-        errorType = 'language_mixing';
-        errorContext.problem = 'No mezcles español e inglés. Escribe todo en inglés';
-      }
-      // Detectar orden de palabras incorrecto
-      else if (/was\s+a\s+walk/i.test(cleanSentence)) {
-        errorType = 'word_order';
-        errorContext.problem = '"was a walk" es incorrecto. Usa "took a walk" o "went for a walk"';
-      }
-      // Detectar combinaciones sin sentido
-      else if (/cat.*reading.*cloud/i.test(cleanSentence)) {
-        errorType = 'nonsensical_combination';
-        errorContext.problem = 'Los gatos no pueden leer nubes';
-      }
-      else if (/table.*eating/i.test(cleanSentence)) {
-        errorType = 'nonsensical_combination';
-        errorContext.problem = 'Las mesas no pueden comer';
       }
 
       // Generar error en español
@@ -714,6 +687,9 @@ const performLiveAnalysis = (text) => {
     }
   });
 
+  // Only mark as overall correct if ALL sentences are valid
+  overallCorrect = totalValidSentences === totalSentences && totalValidSentences > 0 && errors.length === 0;
+
   // Sugerencias generales basadas en el análisis
   if (sentences.length > 0 && !hasCorrectTenses && !hasIncorrectTenses) {
     suggestions.push({
@@ -733,12 +709,8 @@ const performLiveAnalysis = (text) => {
     }));
   }
 
-  // Only mark as overall correct if ALL sentences are valid and there are no errors
-  const totalSentences = sentences.length || 1;
-  overallCorrect = totalValidSentences === totalSentences && totalValidSentences > 0 && errors.length === 0;
-
   // Calcular puntuación de confianza más estricta
-  const confidenceScore = overallCorrect ? 100 : Math.max(0, Math.round(((totalValidSentences - errors.length) / totalSentences) * 100));
+  const confidenceScore = overallCorrect ? Math.round((totalValidSentences / totalSentences) * 100) : Math.max(0, Math.round(((totalValidSentences - errors.length) / totalSentences) * 100));
 
   // Generar recomendaciones inteligentes
   const smartRecs = smartRecommendations.generateSmartRecommendations(text, {
@@ -772,6 +744,233 @@ const performLiveAnalysis = (text) => {
     }
   };
 };
+
+function checkObviousErrors(sentence) {
+  const errors = [];
+  
+  // Check for present tense verbs in past context
+  const presentTensePattern = /\b(I|you|we|they|he|she|it)\s+(am|is|are|go|see|eat|have|do|get|think|know|say|tell|give|find|feel|buy|run|work|play|study|walk|talk|watch|cook|live|help|listen|call|visit|learn|start|finish)\b/gi;
+  if (presentTensePattern.test(sentence)) {
+    errors.push({
+      message: 'Estás usando presente, pero necesitas pasado',
+      explanation: 'Usa "was/were" en lugar de "am/is/are" y verbos en pasado como "went", "saw", "ate", etc.'
+    });
+  }
+  
+  // Check for nonsensical combinations
+  if (/cat.*reading.*cloud/i.test(sentence)) {
+    errors.push({
+      message: 'Esta combinación no tiene sentido lógico',
+      explanation: 'Los gatos no pueden leer nubes. Intenta con objetos que se puedan leer como libros, cartas, etc.'
+    });
+  }
+  
+  if (/table.*eating/i.test(sentence)) {
+    errors.push({
+      message: 'Las mesas no pueden comer',
+      explanation: 'Solo los seres vivos pueden comer. Verifica tu sujeto y verbo.'
+    });
+  }
+  
+  return errors;
+}
+
+/**
+ * 📊 ANÁLISIS COMPLETO Y PUNTUACIÓN
+ * Análisis detallado con puntos y feedback
+ */
+const performFullAnalysis = async (userId, text) => {
+
+    // Verificar errores obvios primero
+    const hasObviousErrors = checkObviousErrors(cleanSentence);
+    
+    if (hasObviousErrors.length > 0) {
+      hasIncorrectTenses = true;
+      hasObviousErrors.forEach(error => {
+        errors.push({
+          type: 'grammar_error',
+          message: error.message,
+          explanation: error.explanation,
+          sentence: cleanSentence,
+          index: index + 1
+        });
+      });
+      return; // Skip further validation for this sentence
+    }
+
+    const hasContinuous = validatePastContinuous(cleanSentence);
+    const hasSimple = validatePastSimple(cleanSentence);
+    const hasValidTense = hasContinuous || hasSimple;
+
+    if (hasValidTense) {
+      hasCorrectTenses = true;
+      totalValidSentences++;
+      
+      // Generar feedback positivo en español
+      if (hasContinuous && hasSimple) {
+        suggestions.push(spanishFeedback.generateSuccessFeedback('complex_sentence', {
+          sentence: cleanSentence,
+          index: index + 1
+        }));
+      } else if (hasContinuous) {
+        suggestions.push(spanishFeedback.generateSuccessFeedback('correct_past_continuous', {
+          sentence: cleanSentence,
+          index: index + 1
+        }));
+      } else if (hasSimple) {
+        suggestions.push(spanishFeedback.generateSuccessFeedback('correct_past_simple', {
+          sentence: cleanSentence,
+          index: index + 1
+        }));
+      }
+    } else {
+      hasIncorrectTenses = true;
+      
+      // Detectar tipo específico de error
+      let errorType = 'general_grammar';
+      let errorContext = { sentence: cleanSentence, index: index + 1 };
+
+      // Detectar si usa presente en contexto pasado
+      if (/\b(am|is|are)\s+\w+ing\b/i.test(cleanSentence)) {
+        errorType = 'present_in_past';
+        errorContext.detected = cleanSentence.match(/\b(am|is|are)\s+\w+ing\b/i)[0];
+      }
+      // Detectar si falta gerundio
+      else if (/\b(was|were)\s+\w+(?!ing)\b/i.test(cleanSentence)) {
+        errorType = 'missing_gerund';
+        errorContext.missing = 'ing';
+      }
+      // Detectar verbos en presente simple
+      else if (/\b(go|see|eat|have|do|get|think|know|say|tell|give|find|feel|buy|run|work|play|study|walk|talk|watch|cook|live|help|listen|call|visit|learn|start|finish)\b/i.test(cleanSentence)) {
+        errorType = 'present_verb_in_past';
+        const presentVerb = cleanSentence.match(/\b(go|see|eat|have|do|get|think|know|say|tell|give|find|feel|buy|run|work|play|study|walk|talk|watch|cook|live|help|listen|call|visit|learn|start|finish)\b/i)[0];
+        errorContext.presentVerb = presentVerb;
+      }
+
+      // Generar error en español
+      const errorFeedback = spanishFeedback.generateErrorFeedback(errorType, errorContext);
+      errors.push(errorFeedback);
+    }
+
+    // Detectar conectores y dar consejos específicos en español
+    const connector = detectConnector(cleanSentence);
+    if (connector) {
+      const connectorTip = educationalTranslator.getConnectorTip(connector, {
+        hasContinuous,
+        hasSimple,
+        sentence: cleanSentence
+      });
+      
+      if (connectorTip) {
+        tips.push(connectorTip);
+      }
+
+      // Sugerencias específicas por conector
+      if (connector === 'while' && !hasContinuous) {
+        tips.push(spanishFeedback.generateTip('while_usage', { 
+          connector,
+          suggestion: 'Past Continuous'
+        }));
+      } else if (connector === 'when' && !hasSimple && !hasContinuous) {
+        tips.push(spanishFeedback.generateTip('when_interruption', { 
+          connector,
+          suggestion: 'Past Simple o Past Continuous según el contexto'
+        }));
+      }
+    }
+  });
+
+  // Only mark as overall correct if ALL sentences are valid
+  overallCorrect = totalValidSentences === totalSentences && totalValidSentences > 0 && errors.length === 0;
+
+  // Sugerencias generales basadas en el análisis
+  if (sentences.length > 0 && !hasCorrectTenses && !hasIncorrectTenses) {
+    suggestions.push({
+      type: 'getting_started',
+      message: '🎯 Para empezar: Escribe sobre eventos pasados',
+      explanation: 'Usa "was/were + verbo-ing" o verbos en pasado como "walked", "studied"',
+      examples: [
+        'I was walking → Yo estaba caminando',
+        'I walked → Yo caminé'
+      ]
+    });
+  }
+
+  if (hasCorrectTenses && !hasIncorrectTenses && sentences.length >= 2) {
+    suggestions.push(spanishFeedback.generateSuccessFeedback('complex_sentence', {
+      sentenceCount: sentences.length
+    }));
+  }
+
+  // Calcular puntuación de confianza más estricta
+  const confidenceScore = overallCorrect ? Math.round((totalValidSentences / totalSentences) * 100) : Math.max(0, Math.round(((totalValidSentences - errors.length) / totalSentences) * 100));
+
+  // Generar recomendaciones inteligentes
+  const smartRecs = smartRecommendations.generateSmartRecommendations(text, {
+    hasContinuous: hasCorrectTenses,
+    hasSimple: hasCorrectTenses,
+    sentences: sentences.length
+  });
+
+  return {
+    suggestions,
+    errors,
+    spell: {
+      // the controller will call spell service for real-time results (to avoid blocking here)
+      hint: 'Call /api/practice/live-analyze for spellcheck details'
+    },
+    tips,
+    hasCorrectTenses,
+    hasIncorrectTenses,
+    overallCorrect,
+    confidenceScore,
+    sentenceCount: sentences.length,
+    wordCount: text.split(/\s+/).filter(w => w.length > 0).length,
+    correction,
+    spanishFeedback: {
+      errors: errors,
+      tips: tips,
+      motivationalMessage: spanishFeedback.getMotivationalMessage()
+    },
+    smartRecommendations: {
+      primaryRecommendation: smartRecs.primaryRecommendation,
+      confidence: Math.round(smartRecs.confidence * 100),
+      smartTips: smartRecs.smartTips,
+      contextualExamples: smartRecs.examples,
+      spanishExplanations: smartRecs.spanishExplanations
+    }
+  };
+};
+
+function checkObviousErrors(sentence) {
+  const errors = [];
+  
+  // Check for present tense verbs in past context
+  const presentTensePattern = /\b(I|you|we|they|he|she|it)\s+(am|is|are|go|see|eat|have|do|get|think|know|say|tell|give|find|feel|buy|run|work|play|study|walk|talk|watch|cook|live|help|listen|call|visit|learn|start|finish)\b/gi;
+  if (presentTensePattern.test(sentence)) {
+    errors.push({
+      message: 'Estás usando presente, pero necesitas pasado',
+      explanation: 'Usa "was/were" en lugar de "am/is/are" y verbos en pasado como "went", "saw", "ate", etc.'
+    });
+  }
+  
+  // Check for nonsensical combinations
+  if (/cat.*reading.*cloud/i.test(sentence)) {
+    errors.push({
+      message: 'Esta combinación no tiene sentido lógico',
+      explanation: 'Los gatos no pueden leer nubes. Intenta con objetos que se puedan leer como libros, cartas, etc.'
+    });
+  }
+  
+  if (/table.*eating/i.test(sentence)) {
+    errors.push({
+      message: 'Las mesas no pueden comer',
+      explanation: 'Solo los seres vivos pueden comer. Verifica tu sujeto y verbo.'
+    });
+  }
+  
+  return errors;
+}
 
 /**
  * 📊 ANÁLISIS COMPLETO Y PUNTUACIÓN

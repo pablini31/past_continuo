@@ -59,6 +59,42 @@ const SPANISH_MESSAGES = {
         correct: "I was walking and eating",
         tip: "Si usas Past Continuous, todos los verbos deben tener -ing"
       }
+    },
+    incorrect_structure: {
+      message: "🔧 Error de estructura: Orden de palabras incorrecto",
+      explanation: "La estructura de la oración no es correcta en inglés",
+      examples: {
+        wrong: "I visiting my friend",
+        correct: "I was visiting my friend",
+        tip: "Recuerda usar auxiliares (was/were) con verbos en -ing"
+      }
+    },
+    language_mixing: {
+      message: "🌍 Error: No mezcles español e inglés",
+      explanation: "Escribe completamente en inglés para practicar mejor",
+      examples: {
+        wrong: "I visited my español teacher",
+        correct: "I visited my Spanish teacher",
+        tip: "Traduce todas las palabras al inglés"
+      }
+    },
+    word_order: {
+      message: "📝 Error de orden: Las palabras están mal ordenadas",
+      explanation: "El orden de las palabras en inglés es diferente al español",
+      examples: {
+        wrong: "was a walk",
+        correct: "took a walk / went for a walk",
+        tip: "Aprende las expresiones comunes en inglés"
+      }
+    },
+    present_verb_in_past: {
+      message: "⏰ Error de tiempo: Usaste presente en contexto pasado",
+      explanation: "Cambia el verbo a su forma en pasado",
+      examples: {
+        wrong: "I go yesterday",
+        correct: "I went yesterday",
+        tip: "Revisa las formas irregulares de los verbos"
+      }
     }
   },
 

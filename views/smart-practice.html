@@ -4,9 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Smart Practice - Past Continuous Builder</title>
+  <link rel="stylesheet" href="/css/theme-styles.css">
   <link rel="stylesheet" href="/css/professional-design.css">
   <link rel="stylesheet" href="/css/grammar-icons.css">
   <link rel="stylesheet" href="/css/real-time-feedback.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
     /* Estilos específicos para la página de práctica */
     .navbar {
@@ -265,7 +267,7 @@
     }
   </style>
 </head>
-<body>
+<body class="page-container">
   
   <!-- Navbar -->
   <nav class="navbar">
@@ -276,6 +278,11 @@
         </a>
         <ul class="navbar-menu">
           <li><span class="navbar-link">Welcome, <strong id="username"></strong>!</span></li>
+          <li>
+            <button id="theme-toggle" class="theme-toggle btn btn-sm btn-outline" aria-label="Toggle theme" style="padding:0.4rem 0.75rem;">
+              <i class="fas fa-sun"></i>
+            </button>
+          </li>
           <li><a href="#" id="logout-btn" class="btn btn-danger btn-sm">Logout</a></li>
         </ul>
       </div>
@@ -287,8 +294,8 @@
     <div id="grammar-icons-container"></div>
 
     <div class="writing-area">
-      <h2 style="margin-bottom: 1rem; color: #1e40af;">✨ Smart Writing Practice</h2>
-      <p style="color: #64748b; margin-bottom: 2rem;">
+      <h2 class="practice-title">✨ Smart Writing Practice</h2>
+      <p class="practice-subtitle">
         Escribe libremente en inglés usando tiempos pasados. ¡Te ayudo en tiempo real! 🚀
       </p>
 
@@ -305,7 +312,7 @@
 
       <!-- Live Suggestions -->
       <div id="live-suggestions" class="live-suggestions">
-        <h4 style="margin: 0 0 1rem 0; color: #1e40af;">💡 Real-time Grammar Correction</h4>
+        <h4 class="correction-title">💡 Real-time Grammar Correction</h4>
         <div id="suggestions-content"></div>
       </div>
 
@@ -358,9 +365,11 @@
   </div>
 
   <!-- Include new JavaScript components -->
+  <script src="/js/main.js"></script>
   <script src="/js/ui-components.js"></script>
   <script src="/js/grammar-icons.js"></script>
   <script src="/js/real-time-analyzer.js"></script>
+  <script src="/js/spell-client.js"></script>
   
   <script>
     // Verificar autenticación
@@ -392,6 +401,55 @@
     const analyzeBtn = document.getElementById('analyze-btn');
     const analysisResult = document.getElementById('analysis-result');
     const analysisContent = document.getElementById('analysis-content');
+
+    // UI helpers for spell/client
+    const ui = {
+      showSpellProblems: (problems) => {
+        liveSuggestions.style.display = 'block';
+        suggestionsContent.innerHTML = '';
+        problems.forEach(p => {
+          const el = document.createElement('div');
+          el.className = 'suggestion-item';
+          el.innerHTML = `<div class="suggestion-type">Spelling: <strong>${p.word}</strong></div>
+            <div class="suggestion-text">Suggestions: ${p.suggestions.join(', ')}</div>`;
+          suggestionsContent.appendChild(el);
+        });
+      },
+      clearSpellProblems: () => {
+        liveSuggestions.style.display = 'none';
+        suggestionsContent.innerHTML = '';
+      },
+      showQuick: (quick) => {
+        // display simple quick suggestions for grammar
+        if (quick && quick.suggestions && quick.suggestions.length > 0) {
+          let quickHtml = '';
+          quick.suggestions.forEach(s => {
+            quickHtml += `<div class="suggestion-item">
+              <div class="suggestion-type">Grammar: ${s.type || 'Tip'}</div>
+              <div class="suggestion-text">${s.message || s}</div>
+            </div>`;
+          });
+          if (quickHtml) {
+            suggestionsContent.innerHTML = quickHtml;
+            liveSuggestions.style.display = 'block';
+          }
+        } else {
+          // If no quick suggestions, don't show the panel
+        }
+      }
+    };
+
+    // Initialize live spell check client
+    if (typeof initLiveSpell === 'function') {
+      try {
+        initLiveSpell(textarea, ui);
+        console.log('Live spell check initialized');
+      } catch (err) {
+        console.error('Could not init live spell:', err);
+      }
+    } else {
+      console.warn('initLiveSpell function not found - spell check disabled');
+    }
 
     // Referencias a stats
     const wordCountEl = document.getElementById('word-count');

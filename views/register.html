@@ -5,9 +5,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Register - Past Continuous Builder</title>
+  <link rel="stylesheet" href="/css/theme-styles.css">
   <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
+<body class="page-container">
   
   <!-- Navbar -->
   <nav class="navbar">
@@ -19,6 +21,11 @@
         <ul class="navbar-menu">
           <li><a href="/" class="navbar-link">Home</a></li>
           <li><a href="/views/login.html" class="navbar-link">Login</a></li>
+          <li>
+            <button class="theme-toggle btn btn-sm btn-outline" aria-label="Toggle theme" style="padding:0.4rem 0.75rem;">
+              <i class="fas fa-moon"></i>
+            </button>
+          </li>
         </ul>
       </div>
     </div>
@@ -106,6 +113,14 @@
 
   <script src="/js/main.js"></script>
   <script>
+    // Attach theme toggle handler
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener('click', () => {
+        toggleTheme();
+      });
+    }
+
     // Manejar el formulario de registro
     const registerForm = document.getElementById('register-form');
     const alertContainer = document.getElementById('alert-container');

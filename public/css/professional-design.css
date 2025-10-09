@@ -714,3 +714,193 @@ p {
 .shadow-md { box-shadow: var(--shadow-md); }
 .shadow-lg { box-shadow: var(--shadow-lg); }
 .shadow-xl { box-shadow: var(--shadow-xl); }
+
+/* ═══════════════════════════════════════════════════
+   🌓 THEME TOGGLE BUTTON
+   ═══════════════════════════════════════════════════ */
+
+.theme-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+}
+
+.theme-toggle:hover {
+  background: var(--gray-100);
+  border-color: var(--primary-400);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.theme-toggle:focus {
+  outline: none;
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 2px var(--primary-100);
+}
+
+.theme-toggle i {
+  transition: all 0.2s ease;
+}
+
+/* Dark theme styles */
+[data-theme="dark"] {
+  /* Override variables for dark theme */
+  --bg-primary: var(--gray-900);
+  --bg-secondary: var(--gray-800);
+  --bg-accent: var(--gray-800);
+  --bg-muted: var(--gray-700);
+  
+  --text-primary: var(--gray-100);
+  --text-secondary: var(--gray-300);
+  --text-muted: var(--gray-400);
+  --text-accent: var(--primary-400);
+  
+  /* Adjust shadows for dark theme */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Dark theme: Cards and containers */
+[data-theme="dark"] .card {
+  background: var(--bg-secondary);
+  border-color: var(--gray-700);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .card-title {
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .card-subtitle {
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .card-body {
+  color: var(--text-primary);
+}
+
+/* Dark theme: Buttons */
+[data-theme="dark"] .btn {
+  border-color: var(--gray-600);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .btn-primary {
+  background: var(--primary-600);
+  border-color: var(--primary-600);
+  color: white;
+}
+
+[data-theme="dark"] .btn-primary:hover:not(:disabled) {
+  background: var(--primary-700);
+  border-color: var(--primary-700);
+}
+
+[data-theme="dark"] .btn-secondary {
+  background: var(--bg-secondary);
+  border-color: var(--gray-600);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .btn-secondary:hover:not(:disabled) {
+  background: var(--gray-700);
+  border-color: var(--gray-500);
+}
+
+[data-theme="dark"] .btn-outline {
+  border-color: var(--gray-600);
+  color: var(--text-secondary);
+  background: transparent;
+}
+
+[data-theme="dark"] .btn-outline:hover {
+  background: var(--gray-700);
+  border-color: var(--gray-500);
+  color: var(--text-primary);
+}
+
+/* Dark theme: Smart practice specific elements */
+[data-theme="dark"] .smart-practice-container {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .navbar {
+  background: var(--bg-secondary);
+  border-bottom-color: var(--gray-700);
+}
+
+[data-theme="dark"] .navbar-brand {
+  color: var(--primary-400);
+}
+
+[data-theme="dark"] .navbar-link {
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .navbar-menu .navbar-link:hover {
+  color: var(--primary-400);
+}
+
+/* Dark theme: Theme toggle button */
+[data-theme="dark"] .theme-toggle {
+  border-color: var(--gray-600);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .theme-toggle:hover {
+  background: var(--gray-700);
+  border-color: var(--primary-400);
+}
+
+/* Smart practice specific styles */
+.practice-title {
+  margin-bottom: 1rem;
+  color: var(--primary-600);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.practice-subtitle {
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+  font-size: 1rem;
+}
+
+.correction-title {
+  margin: 0 0 1rem 0;
+  color: var(--primary-600);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* Dark theme overrides for smart practice */
+[data-theme="dark"] .practice-title {
+  color: var(--primary-400);
+}
+
+[data-theme="dark"] .practice-subtitle {
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .correction-title {
+  color: var(--primary-400);
+}

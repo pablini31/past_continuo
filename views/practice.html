@@ -5,9 +5,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Practice - Past Continuous Builder</title>
+  <link rel="stylesheet" href="/css/theme-styles.css">
   <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
+<body class="page-container">
   
   <!-- Navbar -->
   <nav class="navbar">
@@ -19,6 +21,11 @@
         <ul class="navbar-menu">
           <li><span class="navbar-link" id="user-welcome">Welcome, <strong id="username"></strong>!</span></li>
           <li><a href="/smart-practice" class="btn btn-primary btn-sm">Try Smart Practice ✨</a></li>
+          <li>
+            <button id="theme-toggle" class="theme-toggle btn btn-sm btn-outline" aria-label="Toggle theme" style="padding:0.4rem 0.75rem;">
+              <i class="fas fa-sun"></i>
+            </button>
+          </li>
           <li><a href="#" id="logout-btn" class="btn btn-danger btn-sm">Logout</a></li>
         </ul>
       </div>
@@ -399,6 +406,16 @@
       
       feedbackContainer.innerHTML += analysisHtml;
     }
+  </script>
+
+        });
+      }
+    }
+  </script>
+
+  <script src="/js/main.js"></script>
+  <script>
+    // Practice page is ready - theme handled by main.js
   </script>
 
 </body>
