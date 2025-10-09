@@ -21,12 +21,18 @@ const path = require('path');
 
 // Importar middlewares personalizados
 const errorMiddleware = require('./middlewares/error.middleware');
+const { apiLimiter } = require('./middlewares/rateLimit.middleware');
 
 // Importar rutas
 const authRoutes = require('./routes/auth.routes');
 const practiceRoutes = require('./routes/practice.routes');
 const userRoutes = require('./routes/user.routes');
 const suggestionRoutes = require('./routes/suggestion.routes');
+const realTimeRoutes = require('./routes/real-time.routes');
+const contextualGuidesRoutes = require('./routes/contextual-guides.routes');
+const guidedPracticeRoutes = require('./routes/guided-practice.routes');
+const adaptiveLearningRoutes = require('./routes/adaptive-learning.routes');
+const integrationRoutes = require('./routes/integration.routes');
 
 const app = express();
 
@@ -95,6 +101,12 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
  * Necesario para JWT en cookies
  */
 app.use(cookieParser());
+
+/**
+ * Rate Limiting: Previene spam y abuso
+ * Aplica a todas las rutas de la API
+ */
+app.use('/api', apiLimiter);
 
 // ═══════════════════════════════════════════════════
 // 📁 STATIC FILES
@@ -205,6 +217,11 @@ app.use('/api/auth', authRoutes);
 app.use('/api/practice', practiceRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/suggestions', suggestionRoutes);
+app.use('/api/real-time', realTimeRoutes);
+app.use('/api/guides', contextualGuidesRoutes);
+app.use('/api/guided', guidedPracticeRoutes);
+app.use('/api/adaptive', adaptiveLearningRoutes);
+app.use('/api/integration', integrationRoutes);
 
 // ═══════════════════════════════════════════════════
 // ❌ 404 HANDLER

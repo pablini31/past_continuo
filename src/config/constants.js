@@ -25,9 +25,30 @@ module.exports = {
   // 🔤 Palabras conectoras
   CONNECTORS: ['while', 'when', 'as'],
 
+  // 🎯 Análisis de texto
+  ANALYSIS: {
+    MIN_TEXT_LENGTH: 10,
+    MAX_TEXT_LENGTH: 1000,
+    MIN_WORDS_FOR_BONUS: 50,
+    DEBOUNCE_DELAY: 1500, // ms para análisis en vivo
+    CONFIDENCE_THRESHOLD: 70 // % para considerar "correcto"
+  },
+
   // ⏱️ Tiempos
   SESSION_DURATION: 20 * 60 * 1000, // 20 minutos
   STREAK_RESET_HOURS: 48,
+
+  // 🏆 Badges y logros
+  BADGES: {
+    FIRST_SENTENCE: { id: 'first_sentence', name: 'First Steps', description: 'Complete your first sentence' },
+    STREAK_3: { id: 'streak_3', name: 'Getting Started', description: '3 days streak' },
+    STREAK_7: { id: 'streak_7', name: 'Week Warrior', description: '7 days streak' },
+    STREAK_30: { id: 'streak_30', name: 'Monthly Master', description: '30 days streak' },
+    PERFECT_10: { id: 'perfect_10', name: 'Perfect Ten', description: '10 perfect sentences in a row' },
+    GRAMMAR_GURU: { id: 'grammar_guru', name: 'Grammar Guru', description: '95% accuracy over 50 sentences' },
+    CONNECTOR_MASTER: { id: 'connector_master', name: 'Connector Master', description: 'Master all three connectors' },
+    SPEED_WRITER: { id: 'speed_writer', name: 'Speed Writer', description: 'Write 100+ words in one session' }
+  },
 
   // 📝 Validaciones
   VALIDATION: {

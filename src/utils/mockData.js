@@ -44,7 +44,15 @@ const mockSuggestions = {
     'she was reading a book',
     'they were having dinner',
     'he was studying for the exam',
-    'we were watching a movie'
+    'we were watching a movie',
+    'the children were playing in the park',
+    'my dad was working in the garden',
+    'the dog was barking loudly',
+    'people were walking on the street',
+    'the wind was blowing strongly',
+    'my sister was talking on the phone',
+    'the baby was crying',
+    'students were taking notes'
   ],
   when: [
     // Simple (interrupciones o acciones completas)

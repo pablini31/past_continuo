@@ -19,10 +19,36 @@ const validatePastContinuous = (sentence) => {
  * Valida que una oración use Past Simple correctamente
  */
 const validatePastSimple = (sentence) => {
-  // Regex para detectar verbos en pasado simple
-  // Incluye verbos regulares (-ed) e irregulares comunes
-  const pastSimpleRegex = /\b(went|came|saw|did|had|got|took|made|said|told|gave|found|left|thought|felt|knew|heard|ate|drank|wrote|read|bought|sold|broke|spoke|ran|walked|worked|played|lived|loved|liked|wanted|needed|tried|asked|answered|looked|seemed|appeared|happened|occurred|started|finished|stopped|continued|decided|believed|remembered|forgot|learned|taught|helped|called|talked|listened|watched|studied|traveled|moved|changed|opened|closed|turned|pulled|pushed|carried|brought|sent|received|built|created|destroyed|killed|saved|won|lost|failed|succeeded|agreed|disagreed|argued|discussed|explained|described|suggested|recommended|advised|warned|promised|hoped|wished|expected|surprised|shocked|amazed|confused|worried|scared|excited|bored|interested|tired|relaxed|stressed|angry|happy|sad|proud|ashamed|guilty|innocent|nervous|confident|shy|brave|weak|strong|young|old|new|fresh|clean|dirty|hot|cold|warm|cool|bright|dark|loud|quiet|fast|slow|big|small|long|short|wide|narrow|high|low|deep|shallow|heavy|light|hard|soft|smooth|rough|sweet|bitter|sour|salty|spicy|mild|delicious|terrible|beautiful|ugly|pretty|handsome|cute|scary|funny|serious|silly|smart|stupid|crazy|normal|strange|weird|unusual|common|rare|expensive|cheap|free|busy|lazy|active|passive|positive|negative|good|bad|better|worse|best|worst|easy|difficult|simple|complex|clear|confusing|obvious|hidden|public|private|safe|dangerous|healthy|sick|alive|dead|awake|asleep|early|late|soon|never|always|often|sometimes|rarely|usually|generally|specifically|exactly|approximately|probably|possibly|definitely|certainly|surely|maybe|perhaps|however|therefore|because|although|unless|until|since|while|when|where|why|how|what|who|whom|whose|which)ed\b|\b(was|were|had|did|could|would|should|might|may|must|ought|used\s+to|went|came|saw|ate|drank|wrote|read|bought|sold|broke|spoke|ran|walked|talked|looked|took|made|said|told|gave|found|left|thought|felt|knew|heard|got|put|let|set|met|cut|hit|hurt|cost|burst|cast|caught|taught|brought|fought|sought|bought|thought|brought|caught|taught|fought|sought|wrought)\b/i;
-  return pastSimpleRegex.test(sentence);
+  // Verbos irregulares más comunes en pasado
+  const irregularVerbs = [
+    'was', 'were', 'had', 'did', 'went', 'came', 'saw', 'got', 'took', 'made', 
+    'said', 'told', 'gave', 'found', 'left', 'thought', 'felt', 'knew', 'heard',
+    'ate', 'drank', 'wrote', 'read', 'bought', 'sold', 'broke', 'spoke', 'ran',
+    'drove', 'rode', 'flew', 'swam', 'sang', 'rang', 'began', 'won', 'lost',
+    'met', 'put', 'let', 'set', 'cut', 'hit', 'hurt', 'cost', 'shut', 'quit',
+    'split', 'spread', 'spent', 'sent', 'built', 'lent', 'bent', 'meant',
+    'kept', 'slept', 'wept', 'swept', 'felt', 'dealt', 'dreamt', 'learnt',
+    'burnt', 'spelt', 'smelt', 'caught', 'taught', 'brought', 'fought', 'sought',
+    'thought', 'bought', 'wrought', 'stood', 'understood', 'withstood',
+    'held', 'told', 'sold', 'paid', 'laid', 'said', 'fed', 'led', 'read',
+    'bled', 'bred', 'fled', 'shed', 'sped', 'wed', 'hid', 'slid', 'bid',
+    'rid', 'forbid', 'outdid', 'undid', 'redid', 'arose', 'chose', 'froze',
+    'woke', 'broke', 'spoke', 'stole', 'wore', 'swore', 'tore', 'bore',
+    'drew', 'grew', 'knew', 'threw', 'flew', 'blew', 'showed', 'allowed'
+  ];
+  
+  // Regex para verbos regulares terminados en -ed
+  const regularVerbsRegex = /\b\w+ed\b/i;
+  
+  // Regex para verbos irregulares
+  const irregularVerbsRegex = new RegExp(`\\b(${irregularVerbs.join('|')})\\b`, 'i');
+  
+  // También incluir auxiliares modales en pasado
+  const modalAuxiliariesRegex = /\b(could|would|should|might|used\s+to)\b/i;
+  
+  return regularVerbsRegex.test(sentence) || 
+         irregularVerbsRegex.test(sentence) || 
+         modalAuxiliariesRegex.test(sentence);
 };
 
 /**

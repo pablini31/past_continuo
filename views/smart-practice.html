@@ -4,53 +4,94 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Smart Practice - Past Continuous Builder</title>
-  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/professional-design.css">
+  <link rel="stylesheet" href="/css/grammar-icons.css">
+  <link rel="stylesheet" href="/css/real-time-feedback.css">
   <style>
+    /* Estilos específicos para la página de práctica */
+    .navbar {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--gray-200);
+      padding: var(--space-md) 0;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .navbar-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar-brand {
+      font-size: var(--font-size-xl);
+      font-weight: 600;
+      color: var(--primary-600);
+      text-decoration: none;
+    }
+
+    .navbar-menu {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      gap: var(--space-md);
+      align-items: center;
+    }
+
+    .navbar-link {
+      color: var(--text-secondary);
+      font-size: var(--font-size-sm);
+    }
+
     .smart-practice-container {
-      max-width: 800px;
-      margin: 2rem auto;
-      padding: 2rem;
+      max-width: 900px;
+      margin: var(--space-2xl) auto;
+      padding: 0 var(--space-lg);
     }
 
     .writing-area {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-      padding: 2rem;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      padding: var(--space-2xl);
       text-align: center;
+      border: 1px solid var(--gray-200);
     }
 
     .main-textarea {
       width: 100%;
-      min-height: 150px;
-      padding: 1.5rem;
-      border: 2px solid #e2e8f0;
-      border-radius: 12px;
-      font-size: 1.2rem;
+      min-height: 180px;
+      padding: var(--space-lg);
+      border: 2px solid var(--gray-300);
+      border-radius: var(--radius-lg);
+      font-size: var(--font-size-lg);
       line-height: 1.6;
       resize: vertical;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      transition: border-color 0.3s ease;
+      font-family: var(--font-family);
+      transition: all var(--transition-fast);
+      background: var(--bg-primary);
     }
 
     .main-textarea:focus {
       outline: none;
-      border-color: #4f46e5;
-      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+      border-color: var(--primary-500);
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+      background: var(--bg-secondary);
     }
 
     .live-suggestions {
-      margin-top: 1.5rem;
-      padding: 1rem;
-      background: #f8fafc;
-      border-radius: 8px;
-      border-left: 4px solid #3b82f6;
+      margin-top: var(--space-lg);
+      padding: var(--space-lg);
+      background: var(--primary-50);
+      border-radius: var(--radius-md);
+      border-left: 4px solid var(--primary-500);
       display: none;
+      animation: fadeIn var(--transition-normal) ease-out;
     }
 
     .suggestion-item {
-      padding: 0.5rem 0;
-      border-bottom: 1px solid #e2e8f0;
+      padding: var(--space-sm) 0;
+      border-bottom: 1px solid var(--primary-200);
     }
 
     .suggestion-item:last-child {
@@ -59,38 +100,47 @@
 
     .suggestion-type {
       font-weight: 600;
-      color: #1e40af;
-      margin-bottom: 0.25rem;
+      color: var(--primary-700);
+      margin-bottom: var(--space-xs);
+      font-size: var(--font-size-sm);
     }
 
     .suggestion-text {
-      color: #475569;
-      font-size: 0.9rem;
+      color: var(--text-secondary);
+      font-size: var(--font-size-sm);
     }
 
     .writing-stats {
-      display: flex;
-      justify-content: space-around;
-      margin-top: 1.5rem;
-      padding: 1rem;
-      background: #f1f5f9;
-      border-radius: 8px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: var(--space-md);
+      margin-top: var(--space-lg);
+      padding: var(--space-lg);
+      background: var(--bg-muted);
+      border-radius: var(--radius-md);
     }
 
     .stat-item {
       text-align: center;
+      padding: var(--space-sm);
     }
 
     .stat-value {
-      font-size: 1.25rem;
+      font-size: var(--font-size-xl);
       font-weight: 600;
-      color: #1e40af;
+      color: var(--primary-600);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-xs);
     }
 
     .stat-label {
-      font-size: 0.8rem;
-      color: #64748b;
-      margin-top: 0.25rem;
+      font-size: var(--font-size-xs);
+      color: var(--text-muted);
+      margin-top: var(--space-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
 
     .grammar-indicator {
@@ -98,33 +148,35 @@
       width: 12px;
       height: 12px;
       border-radius: 50%;
-      margin-left: 0.5rem;
+      animation: pulse 2s infinite;
     }
 
-    .grammar-correct { background-color: #10b981; }
-    .grammar-mixed { background-color: #f59e0b; }
-    .grammar-incorrect { background-color: #ef4444; }
-    .grammar-neutral { background-color: #6b7280; }
+    .grammar-correct { background-color: var(--success-500); }
+    .grammar-mixed { background-color: var(--warning-500); }
+    .grammar-incorrect { background-color: var(--error-500); }
+    .grammar-neutral { background-color: var(--gray-400); }
 
     .submit-section {
-      margin-top: 2rem;
+      margin-top: var(--space-xl);
       text-align: center;
     }
 
     .btn-analyze {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
       color: white;
       border: none;
-      padding: 1rem 2rem;
-      border-radius: 8px;
-      font-size: 1.1rem;
+      padding: var(--space-md) var(--space-2xl);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-lg);
       font-weight: 600;
       cursor: pointer;
-      transition: transform 0.2s ease;
+      transition: all var(--transition-fast);
+      box-shadow: var(--shadow-md);
     }
 
-    .btn-analyze:hover {
+    .btn-analyze:hover:not(:disabled) {
       transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
     }
 
     .btn-analyze:disabled {
@@ -134,28 +186,82 @@
     }
 
     .analysis-result {
-      margin-top: 2rem;
-      padding: 1.5rem;
-      border-radius: 8px;
+      margin-top: var(--space-xl);
+      padding: var(--space-lg);
+      border-radius: var(--radius-md);
       display: none;
+      animation: fadeIn var(--transition-normal) ease-out;
     }
 
     .analysis-success {
-      background: #ecfdf5;
-      border: 1px solid #10b981;
-      color: #065f46;
+      background: var(--success-50);
+      border: 1px solid var(--success-200);
+      color: var(--success-800);
     }
 
     .analysis-error {
-      background: #fef2f2;
-      border: 1px solid #ef4444;
-      color: #991b1b;
+      background: var(--error-50);
+      border: 1px solid var(--error-200);
+      color: var(--error-800);
     }
 
     .analysis-mixed {
-      background: #fffbeb;
-      border: 1px solid #f59e0b;
-      color: #92400e;
+      background: var(--warning-50);
+      border: 1px solid var(--warning-200);
+      color: var(--warning-800);
+    }
+
+    /* Corrección en tiempo real mejorada */
+    #live-correction {
+      background: linear-gradient(135deg, var(--success-50) 0%, var(--primary-50) 100%);
+      border: 2px solid var(--success-300);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      animation: slideIn var(--transition-normal) ease-out;
+    }
+
+    #corrected-text {
+      background: var(--bg-secondary);
+      border-left: 4px solid var(--success-500);
+      border-radius: var(--radius-md);
+      font-family: var(--font-family);
+    }
+
+    #apply-correction {
+      background: var(--success-600);
+      transition: all var(--transition-fast);
+    }
+
+    #apply-correction:hover {
+      background: var(--success-700);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .smart-practice-container {
+        margin: var(--space-lg) auto;
+        padding: 0 var(--space-md);
+      }
+
+      .writing-area {
+        padding: var(--space-lg);
+      }
+
+      .main-textarea {
+        font-size: var(--font-size-base);
+        padding: var(--space-md);
+      }
+
+      .writing-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .navbar-menu {
+        flex-direction: column;
+        gap: var(--space-sm);
+      }
     }
   </style>
 </head>
@@ -177,19 +283,25 @@
   </nav>
 
   <div class="smart-practice-container">
+    <!-- Grammar Icons Section -->
+    <div id="grammar-icons-container"></div>
+
     <div class="writing-area">
       <h2 style="margin-bottom: 1rem; color: #1e40af;">✨ Smart Writing Practice</h2>
       <p style="color: #64748b; margin-bottom: 2rem;">
-        Write freely in English using past tenses. I'll help you in real-time! 🚀
+        Escribe libremente en inglés usando tiempos pasados. ¡Te ayudo en tiempo real! 🚀
       </p>
 
       <textarea 
         id="main-textarea" 
         class="main-textarea"
-        placeholder="Start writing your story or sentence in English... For example: 'Yesterday I was walking when I saw...' or 'Last night she studied while her brother played...'"
+        placeholder="Empieza escribiendo tu historia u oración en inglés... Por ejemplo: 'Yesterday I was walking when I saw...' o 'Last night she studied while her brother played...'"
         autocomplete="off"
         spellcheck="false"
       ></textarea>
+
+      <!-- Real-time Feedback Container -->
+      <div id="real-time-feedback" class="feedback-container"></div>
 
       <!-- Live Suggestions -->
       <div id="live-suggestions" class="live-suggestions">
@@ -245,6 +357,11 @@
     </div>
   </div>
 
+  <!-- Include new JavaScript components -->
+  <script src="/js/ui-components.js"></script>
+  <script src="/js/grammar-icons.js"></script>
+  <script src="/js/real-time-analyzer.js"></script>
+  
   <script>
     // Verificar autenticación
     const token = localStorage.getItem('token');
@@ -282,6 +399,13 @@
     const tenseDetectionEl = document.getElementById('tense-detection');
     const confidenceScoreEl = document.getElementById('confidence-score');
 
+    // Inicializar el analizador en tiempo real con iconos
+    const realTimeAnalyzer = new RealTimeAnalyzer(
+      'main-textarea',
+      'grammar-icons-container', 
+      'real-time-feedback'
+    );
+
     let analysisTimeout;
     let lastAnalyzedText = '';
     let currentCorrection = null;
@@ -293,6 +417,10 @@
         liveCorrection.style.display = 'none';
         currentCorrection = null;
         updateBasicStats(textarea.value);
+        
+        // Mostrar animación de éxito
+        UIAnimations.bounce(textarea);
+        UIToast.success('¡Corrección aplicada exitosamente!', 2000);
       }
     });
 
@@ -481,12 +609,19 @@
       const text = textarea.value.trim();
       
       if (text.length < 10) {
-        alert('Please write at least a few words before analyzing.');
+        UIToast.warning('Por favor escribe al menos unas palabras antes de analizar.');
         return;
       }
 
+      // Crear spinner en el botón
+      const spinner = new UISpinner(analyzeBtn.parentElement, {
+        text: 'Analizando tu escritura...',
+        size: 'md'
+      });
+      
       analyzeBtn.disabled = true;
-      analyzeBtn.textContent = '🔍 Analyzing...';
+      analyzeBtn.textContent = '🔍 Analizando...';
+      spinner.show();
 
       try {
         const response = await fetch('/api/practice/full-analyze', {
@@ -502,16 +637,18 @@
 
         if (data.success) {
           showFullAnalysis(data.data);
+          UIToast.success('¡Análisis completado exitosamente!');
         } else {
           throw new Error(data.message);
         }
 
       } catch (error) {
         console.error('Full analysis error:', error);
-        alert('Analysis failed. Please try again.');
+        UIToast.error('Error al analizar. Por favor intenta de nuevo.');
       } finally {
         analyzeBtn.disabled = false;
         analyzeBtn.textContent = '🔍 Analyze My Writing';
+        spinner.hide();
       }
     });
 

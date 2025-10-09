@@ -22,6 +22,14 @@ const {
   sanitizeSentence
 } = require('../utils/validator');
 const gamificationService = require('./gamification.service');
+const { SpanishFeedbackService } = require('./spanish-feedback.service');
+const { EducationalTranslatorService } = require('./educational-translator.service');
+const { SmartRecommendationsService } = require('./smart-recommendations.service');
+
+// Instanciar servicios de feedback en español
+const spanishFeedback = new SpanishFeedbackService();
+const educationalTranslator = new EducationalTranslatorService();
+const smartRecommendations = new SmartRecommendationsService();
 
 /**
  * ✅ VALIDAR Y GUARDAR ORACIÓN
@@ -559,12 +567,14 @@ const generateCorrection = (text) => {
   };
 };
 /**
- * 🔍 ANÁLISIS EN TIEMPO REAL
+ * 🔍 ANÁLISIS EN TIEMPO REAL CON FEEDBACK EN ESPAÑOL
  * Analiza el texto mientras el usuario escribe
  */
 const performLiveAnalysis = (text) => {
   const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 5);
   const suggestions = [];
+  const errors = [];
+  const tips = [];
   
   let hasCorrectTenses = false;
   let hasIncorrectTenses = false;
@@ -584,29 +594,72 @@ const performLiveAnalysis = (text) => {
 
     if (hasValidTense) {
       hasCorrectTenses = true;
+      
+      // Generar feedback positivo en español
+      if (hasContinuous && hasSimple) {
+        suggestions.push(spanishFeedback.generateSuccessFeedback('complex_sentence', {
+          sentence: cleanSentence,
+          index: index + 1
+        }));
+      } else if (hasContinuous) {
+        suggestions.push(spanishFeedback.generateSuccessFeedback('correct_past_continuous', {
+          sentence: cleanSentence,
+          index: index + 1
+        }));
+      } else if (hasSimple) {
+        suggestions.push(spanishFeedback.generateSuccessFeedback('correct_past_simple', {
+          sentence: cleanSentence,
+          index: index + 1
+        }));
+      }
     } else {
       hasIncorrectTenses = true;
       overallCorrect = false;
       
-      suggestions.push({
-        type: '⚠️ Grammar Check',
-        message: `Sentence ${index + 1}: Consider using Past Simple (walked, studied) or Past Continuous (was walking, were studying).`
-      });
+      // Detectar tipo específico de error
+      let errorType = 'general_grammar';
+      let errorContext = { sentence: cleanSentence, index: index + 1 };
+
+      // Detectar si usa presente en contexto pasado
+      if (/\b(am|is|are)\s+\w+ing\b/i.test(cleanSentence)) {
+        errorType = 'present_in_past';
+        errorContext.detected = cleanSentence.match(/\b(am|is|are)\s+\w+ing\b/i)[0];
+      }
+      // Detectar si falta gerundio
+      else if (/\b(was|were)\s+\w+(?!ing)\b/i.test(cleanSentence)) {
+        errorType = 'missing_gerund';
+        errorContext.missing = 'ing';
+      }
+
+      // Generar error en español
+      const errorFeedback = spanishFeedback.generateErrorFeedback(errorType, errorContext);
+      errors.push(errorFeedback);
     }
 
-    // Detectar conectores y dar consejos específicos
+    // Detectar conectores y dar consejos específicos en español
     const connector = detectConnector(cleanSentence);
     if (connector) {
+      const connectorTip = educationalTranslator.getConnectorTip(connector, {
+        hasContinuous,
+        hasSimple,
+        sentence: cleanSentence
+      });
+      
+      if (connectorTip) {
+        tips.push(connectorTip);
+      }
+
+      // Sugerencias específicas por conector
       if (connector === 'while' && !hasContinuous) {
-        suggestions.push({
-          type: '💡 Style Tip',
-          message: `With "${connector}", Past Continuous often works better to show ongoing actions.`
-        });
+        tips.push(spanishFeedback.generateTip('while_usage', { 
+          connector,
+          suggestion: 'Past Continuous'
+        }));
       } else if (connector === 'when' && !hasSimple && !hasContinuous) {
-        suggestions.push({
-          type: '💡 Grammar Tip',
-          message: `With "${connector}", you can use Past Simple for quick actions or Past Continuous for ongoing ones.`
-        });
+        tips.push(spanishFeedback.generateTip('when_interruption', { 
+          connector,
+          suggestion: 'Past Simple o Past Continuous según el contexto'
+        }));
       }
     }
   });
@@ -614,16 +667,20 @@ const performLiveAnalysis = (text) => {
   // Sugerencias generales basadas en el análisis
   if (sentences.length > 0 && !hasCorrectTenses && !hasIncorrectTenses) {
     suggestions.push({
-      type: '🎯 Getting Started',
-      message: 'Try writing about past events using "was/were + verb-ing" or simple past verbs like "walked", "studied", "happened".'
+      type: 'getting_started',
+      message: '🎯 Para empezar: Escribe sobre eventos pasados',
+      explanation: 'Usa "was/were + verbo-ing" o verbos en pasado como "walked", "studied"',
+      examples: [
+        'I was walking → Yo estaba caminando',
+        'I walked → Yo caminé'
+      ]
     });
   }
 
   if (hasCorrectTenses && !hasIncorrectTenses && sentences.length >= 2) {
-    suggestions.push({
-      type: '🎉 Great Job!',
-      message: 'Excellent use of past tenses! Your grammar is on point.'
-    });
+    suggestions.push(spanishFeedback.generateSuccessFeedback('complex_sentence', {
+      sentenceCount: sentences.length
+    }));
   }
 
   // Calcular puntuación de confianza
@@ -635,15 +692,36 @@ const performLiveAnalysis = (text) => {
   
   const confidenceScore = Math.round((correctSentences / totalSentences) * 100);
 
+  // Generar recomendaciones inteligentes
+  const smartRecs = smartRecommendations.generateSmartRecommendations(text, {
+    hasContinuous: hasCorrectTenses,
+    hasSimple: hasCorrectTenses,
+    sentences: sentences.length
+  });
+
   return {
     suggestions,
+    errors,
+    tips,
     hasCorrectTenses,
     hasIncorrectTenses,
     overallCorrect,
     confidenceScore,
     sentenceCount: sentences.length,
     wordCount: text.split(/\s+/).filter(w => w.length > 0).length,
-    correction // Incluir la corrección en el resultado
+    correction,
+    spanishFeedback: {
+      errors: errors,
+      tips: tips,
+      motivationalMessage: spanishFeedback.getMotivationalMessage()
+    },
+    smartRecommendations: {
+      primaryRecommendation: smartRecs.primaryRecommendation,
+      confidence: Math.round(smartRecs.confidence * 100),
+      smartTips: smartRecs.smartTips,
+      contextualExamples: smartRecs.examples,
+      spanishExplanations: smartRecs.spanishExplanations
+    }
   };
 };
 
