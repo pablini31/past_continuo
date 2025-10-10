@@ -10,90 +10,257 @@
   <link rel="stylesheet" href="/css/real-time-feedback.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
-    /* Estilos específicos para la página de práctica */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 50%, #7c2d12 100%);
+      color: #1f2937;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Navbar minimalista */
     .navbar {
-      background: var(--bg-secondary);
-      border-bottom: 1px solid var(--gray-200);
-      padding: var(--space-md) 0;
-      box-shadow: var(--shadow-sm);
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      padding: 1rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .navbar-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
     .navbar-brand {
-      font-size: var(--font-size-xl);
-      font-weight: 600;
-      color: var(--primary-600);
+      color: white;
       text-decoration: none;
+      font-weight: 700;
+      font-size: 1.25rem;
     }
 
     .navbar-menu {
       display: flex;
       list-style: none;
-      margin: 0;
-      padding: 0;
-      gap: var(--space-md);
+      gap: 1.5rem;
       align-items: center;
     }
 
     .navbar-link {
-      color: var(--text-secondary);
-      font-size: var(--font-size-sm);
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.9rem;
     }
 
-    .smart-practice-container {
-      max-width: 900px;
-      margin: var(--space-2xl) auto;
-      padding: 0 var(--space-lg);
+    /* Layout principal - centrado y equilibrado */
+    .practice-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+      min-height: calc(100vh - 80px);
+      display: grid;
+      grid-template-columns: 1fr 2fr 1fr;
+      gap: 2rem;
+      align-items: start;
     }
 
-    .writing-area {
-      background: var(--bg-secondary);
-      border-radius: var(--radius-xl);
-      box-shadow: var(--shadow-lg);
-      padding: var(--space-2xl);
+    /* Panel izquierdo - Estadísticas */
+    .left-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* Panel central - Área de escritura */
+    .center-panel {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Panel derecho - Solo iconos */
+    .right-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    /* Panel de iconos con más espacio */
+    .right-panel .panel {
+      min-height: 300px;
+      padding: 1rem;
+    }
+
+    /* Estilos de paneles */
+    .panel {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(15px);
+      border-radius: 16px;
+      padding: 1rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+
+
+    .panel-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #1e40af;
+      margin-bottom: 0.75rem;
       text-align: center;
-      border: 1px solid var(--gray-200);
     }
 
+    /* Títulos más compactos para paneles del lado derecho */
+    .right-panel .panel-title {
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Header del área de escritura */
+    .writing-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .writing-title {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #1e40af;
+      margin-bottom: 0.5rem;
+    }
+
+    .writing-subtitle {
+      color: #6b7280;
+      font-size: 1rem;
+    }
+
+    /* Textarea principal */
     .main-textarea {
       width: 100%;
-      min-height: 180px;
-      padding: var(--space-lg);
-      border: 2px solid var(--gray-300);
-      border-radius: var(--radius-lg);
-      font-size: var(--font-size-lg);
+      height: 150px;
+      padding: 1.25rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 1.1rem;
       line-height: 1.6;
-      resize: vertical;
-      font-family: var(--font-family);
-      transition: all var(--transition-fast);
-      background: var(--bg-primary);
+      resize: none;
+      font-family: inherit;
+      transition: all 0.3s ease;
+      background: #ffffff;
+      margin-bottom: 1rem;
     }
 
     .main-textarea:focus {
       outline: none;
-      border-color: var(--primary-500);
-      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
-      background: var(--bg-secondary);
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     }
 
-    .live-suggestions {
-      margin-top: var(--space-lg);
-      padding: var(--space-lg);
-      background: var(--primary-50);
-      border-radius: var(--radius-md);
-      border-left: 4px solid var(--primary-500);
-      display: none;
-      animation: fadeIn var(--transition-normal) ease-out;
+    /* Botón de análisis */
+    .analyze-btn {
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      color: white;
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+      width: 100%;
+    }
+
+    .analyze-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+    }
+
+    .analyze-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Estadísticas */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      padding: 1rem;
+      border-radius: 10px;
+      text-align: center;
+      border: 1px solid #e2e8f0;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #1e40af;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+
+    /* Iconos de gramática - estilo limpio */
+    #grammar-icons-container {
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding: 0.5rem;
+    }
+
+    /* Estilos suaves para los iconos sin forzar tamaños */
+    #grammar-icons-container .grammar-icon {
+      margin: 0.25rem;
+    }
+
+    #grammar-icons-container .icon-row {
+      margin: 0.5rem 0;
+    }
+
+    /* Sugerencias - siempre visibles con contenido por defecto */
+    .suggestions-container {
+      min-height: 120px;
+      max-height: 200px;
+      display: block !important;
+      overflow-y: auto;
+    }
+
+    .suggestions-placeholder {
+      color: #9ca3af;
+      font-style: italic;
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.9rem;
     }
 
     .suggestion-item {
-      padding: var(--space-sm) 0;
-      border-bottom: 1px solid var(--primary-200);
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #e5e7eb;
     }
 
     .suggestion-item:last-child {
@@ -102,269 +269,221 @@
 
     .suggestion-type {
       font-weight: 600;
-      color: var(--primary-700);
-      margin-bottom: var(--space-xs);
-      font-size: var(--font-size-sm);
+      color: #1e40af;
+      font-size: 0.85rem;
+      margin-bottom: 0.25rem;
     }
 
     .suggestion-text {
-      color: var(--text-secondary);
-      font-size: var(--font-size-sm);
+      color: #4b5563;
+      font-size: 0.85rem;
+      line-height: 1.4;
     }
 
-    .writing-stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: var(--space-md);
-      margin-top: var(--space-lg);
-      padding: var(--space-lg);
-      background: var(--bg-muted);
-      border-radius: var(--radius-md);
+    /* Corrección en tiempo real */
+    .live-correction {
+      background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+      border: 2px solid #10b981;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-top: 1rem;
+      display: none;
     }
 
-    .stat-item {
-      text-align: center;
-      padding: var(--space-sm);
-    }
-
-    .stat-value {
-      font-size: var(--font-size-xl);
+    .correction-text {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      border-left: 4px solid #10b981;
       font-weight: 600;
-      color: var(--primary-600);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: var(--space-xs);
+      color: #065f46;
+      margin: 0.5rem 0;
     }
 
-    .stat-label {
-      font-size: var(--font-size-xs);
-      color: var(--text-muted);
-      margin-top: var(--space-xs);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .grammar-indicator {
-      display: inline-block;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
-
-    .grammar-correct { background-color: var(--success-500); }
-    .grammar-mixed { background-color: var(--warning-500); }
-    .grammar-incorrect { background-color: var(--error-500); }
-    .grammar-neutral { background-color: var(--gray-400); }
-
-    .submit-section {
-      margin-top: var(--space-xl);
-      text-align: center;
-    }
-
-    .btn-analyze {
-      background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
+    .apply-btn {
+      background: #10b981;
       color: white;
       border: none;
-      padding: var(--space-md) var(--space-2xl);
-      border-radius: var(--radius-md);
-      font-size: var(--font-size-lg);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all var(--transition-fast);
-      box-shadow: var(--shadow-md);
+      transition: all 0.3s ease;
     }
 
-    .btn-analyze:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .btn-analyze:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .analysis-result {
-      margin-top: var(--space-xl);
-      padding: var(--space-lg);
-      border-radius: var(--radius-md);
-      display: none;
-      animation: fadeIn var(--transition-normal) ease-out;
-    }
-
-    .analysis-success {
-      background: var(--success-50);
-      border: 1px solid var(--success-200);
-      color: var(--success-800);
-    }
-
-    .analysis-error {
-      background: var(--error-50);
-      border: 1px solid var(--error-200);
-      color: var(--error-800);
-    }
-
-    .analysis-mixed {
-      background: var(--warning-50);
-      border: 1px solid var(--warning-200);
-      color: var(--warning-800);
-    }
-
-    /* Corrección en tiempo real mejorada */
-    #live-correction {
-      background: linear-gradient(135deg, var(--success-50) 0%, var(--primary-50) 100%);
-      border: 2px solid var(--success-300);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-md);
-      animation: slideIn var(--transition-normal) ease-out;
-    }
-
-    #corrected-text {
-      background: var(--bg-secondary);
-      border-left: 4px solid var(--success-500);
-      border-radius: var(--radius-md);
-      font-family: var(--font-family);
-    }
-
-    #apply-correction {
-      background: var(--success-600);
-      transition: all var(--transition-fast);
-    }
-
-    #apply-correction:hover {
-      background: var(--success-700);
+    .apply-btn:hover {
+      background: #059669;
       transform: translateY(-1px);
-      box-shadow: var(--shadow-md);
     }
 
-    /* Responsive design */
+    /* Resultados de análisis */
+    .analysis-result {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 12px;
+      display: none;
+      border-left: 4px solid #3b82f6;
+      background: #f8fafc;
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .practice-container {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      
+      .left-panel, .right-panel {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+      }
+    }
+
     @media (max-width: 768px) {
-      .smart-practice-container {
-        margin: var(--space-lg) auto;
-        padding: 0 var(--space-md);
+      .practice-container {
+        padding: 1rem;
       }
-
-      .writing-area {
-        padding: var(--space-lg);
+      
+      .center-panel {
+        padding: 1.5rem;
       }
-
+      
       .main-textarea {
-        font-size: var(--font-size-base);
-        padding: var(--space-md);
+        height: 120px;
+        font-size: 1rem;
       }
-
-      .writing-stats {
-        grid-template-columns: repeat(2, 1fr);
+      
+      .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.5rem;
       }
-
-      .navbar-menu {
-        flex-direction: column;
-        gap: var(--space-sm);
+      
+      .stat-card {
+        padding: 0.75rem;
+      }
+      
+      .stat-value {
+        font-size: 1.25rem;
       }
     }
   </style>
 </head>
-<body class="page-container">
-  
+<body>
   <!-- Navbar -->
   <nav class="navbar">
-    <div class="container">
-      <div class="navbar-content">
-        <a href="/" class="navbar-brand">
-          📚 Past Continuous Builder
-        </a>
-        <ul class="navbar-menu">
-          <li><span class="navbar-link">Welcome, <strong id="username"></strong>!</span></li>
-          <li>
-            <button id="theme-toggle" class="theme-toggle btn btn-sm btn-outline" aria-label="Toggle theme" style="padding:0.4rem 0.75rem;">
-              <i class="fas fa-sun"></i>
-            </button>
-          </li>
-          <li><a href="#" id="logout-btn" class="btn btn-danger btn-sm">Logout</a></li>
-        </ul>
-      </div>
+    <div class="navbar-content">
+      <a href="/" class="navbar-brand">📚 Past Continuous Builder</a>
+      <ul class="navbar-menu">
+        <li><span class="navbar-link">Welcome, <strong id="username"></strong>!</span></li>
+        <li>
+          <button id="theme-toggle" class="theme-toggle btn btn-sm btn-outline" style="padding:0.4rem 0.75rem;">
+            <i class="fas fa-sun"></i>
+          </button>
+        </li>
+        <li><a href="#" id="logout-btn" class="btn btn-danger btn-sm">Logout</a></li>
+      </ul>
     </div>
   </nav>
 
-  <div class="smart-practice-container">
-    <!-- Grammar Icons Section -->
-    <div id="grammar-icons-container"></div>
+  <!-- Layout principal -->
+  <div class="practice-container">
+    <!-- Panel izquierdo - Estadísticas y Tips -->
+    <div class="left-panel">
+      <div class="panel">
+        <h3 class="panel-title">📊 Live Statistics</h3>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="word-count">0</div>
+            <div class="stat-label">Words</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="sentence-count">0</div>
+            <div class="stat-label">Sentences</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="tense-detection">Mixed</div>
+            <div class="stat-label">Grammar</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="confidence-score">0%</div>
+            <div class="stat-label">Confidence</div>
+          </div>
+        </div>
+      </div>
 
-    <div class="writing-area">
-      <h2 class="practice-title">✨ Smart Writing Practice</h2>
-      <p class="practice-subtitle">
-        Escribe libremente en inglés usando tiempos pasados. ¡Te ayudo en tiempo real! 🚀
-      </p>
+      <!-- Consejos fijos -->
+      <div class="panel">
+        <h3 class="panel-title">💡 Grammar Tips</h3>
+        <div class="tips-content">
+          <div class="suggestion-item">
+            <div class="suggestion-type">Past Simple</div>
+            <div class="suggestion-text">Use 'walked', 'saw', 'went' for completed actions</div>
+          </div>
+          <div class="suggestion-item">
+            <div class="suggestion-type">Past Continuous</div>
+            <div class="suggestion-text">Use 'was/were + verb-ing' for ongoing actions</div>
+          </div>
+          <div class="suggestion-item">
+            <div class="suggestion-type">Connectors</div>
+            <div class="suggestion-text">Use 'while' for simultaneous actions, 'when' for interruptions</div>
+          </div>
+          <div class="suggestion-item">
+            <div class="suggestion-type">Time expressions</div>
+            <div class="suggestion-text">Yesterday, last night, at 3pm help set the scene</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel central - Área de escritura -->
+    <div class="center-panel">
+      <div class="writing-header">
+        <h1 class="writing-title">✨ Smart Writing Practice</h1>
+        <p class="writing-subtitle">Escribe libremente en inglés usando tiempos pasados. ¡Te ayudo en tiempo real! 🚀</p>
+      </div>
 
       <textarea 
         id="main-textarea" 
         class="main-textarea"
         placeholder="Empieza escribiendo tu historia u oración en inglés... Por ejemplo: 'Yesterday I was walking when I saw...' o 'Last night she studied while her brother played...'"
-        autocomplete="off"
+        autocomplete="off" 
         spellcheck="false"
       ></textarea>
 
-      <!-- Real-time Feedback Container -->
-      <div id="real-time-feedback" class="feedback-container"></div>
+      <button id="analyze-btn" class="analyze-btn" disabled>
+        🔍 Analyze My Writing
+      </button>
 
-      <!-- Live Suggestions -->
-      <div id="live-suggestions" class="live-suggestions">
-        <h4 class="correction-title">💡 Real-time Grammar Correction</h4>
-        <div id="suggestions-content"></div>
-      </div>
-
-      <!-- Live Correction Display -->
-      <div id="live-correction" style="display: none; margin-top: 1rem; padding: 1.5rem; background: linear-gradient(135deg, #e8f5e8 0%, #f0f9ff 100%); border: 2px solid #10b981; border-radius: 12px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);">
-        <div style="display: flex; align-items: center; margin-bottom: 1rem;">
-          <span style="color: #059669; font-weight: 700; font-size: 1.1rem; margin-right: 0.5rem;">✨ Suggested Correction:</span>
-        </div>
-        <div id="corrected-text" style="font-size: 1.2rem; color: #065f46; font-weight: 600; line-height: 1.6; padding: 1rem; background: white; border-radius: 8px; border-left: 4px solid #10b981;"></div>
-        <div style="margin-top: 1rem; display: flex; align-items: center; gap: 1rem;">
-          <button id="apply-correction" class="btn" style="background: #10b981; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">Apply Correction ✓</button>
-          <span style="color: #6b7280; font-size: 0.95rem;">or keep typing to dismiss</span>
+      <!-- Corrección en tiempo real -->
+      <div id="live-correction" class="live-correction">
+        <div style="color: #059669; font-weight: 700; margin-bottom: 0.5rem;">✨ Suggested Correction:</div>
+        <div id="corrected-text" class="correction-text"></div>
+        <div style="margin-top: 0.75rem;">
+          <button id="apply-correction" class="apply-btn">Apply Correction ✓</button>
+          <span style="color: #6b7280; font-size: 0.85rem; margin-left: 1rem;">or keep typing to dismiss</span>
         </div>
       </div>
 
-      <!-- Writing Stats -->
-      <div class="writing-stats">
-        <div class="stat-item">
-          <div class="stat-value" id="word-count">0</div>
-          <div class="stat-label">Words</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-value" id="sentence-count">0</div>
-          <div class="stat-label">Sentences</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-value" id="tense-detection">
-            Mixed <span class="grammar-indicator grammar-neutral"></span>
-          </div>
-          <div class="stat-label">Grammar</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-value" id="confidence-score">0%</div>
-          <div class="stat-label">Confidence</div>
-        </div>
-      </div>
-
-      <!-- Submit Section -->
-      <div class="submit-section">
-        <button id="analyze-btn" class="btn-analyze" disabled>
-          🔍 Analyze My Writing
-        </button>
-      </div>
-
-      <!-- Analysis Result -->
+      <!-- Resultados de análisis -->
       <div id="analysis-result" class="analysis-result">
         <div id="analysis-content"></div>
       </div>
     </div>
+
+    <!-- Panel derecho - Solo iconos de gramática -->
+    <div class="right-panel">
+      <div class="panel">
+        <h3 class="panel-title">🎯 Grammar Structure</h3>
+        <div id="grammar-icons-container"></div>
+      </div>
+
+      <div id="real-time-feedback" class="feedback-container"></div>
+    </div>
   </div>
 
-  <!-- Include new JavaScript components -->
+  <!-- Scripts -->
   <script src="/js/main.js"></script>
   <script src="/js/ui-components.js"></script>
   <script src="/js/grammar-icons.js"></script>
@@ -377,7 +496,6 @@
     const user = JSON.parse(localStorage.getItem('user') || '{}');
 
     if (!token) {
-      // Si no está logueado, redirigir al login
       window.location.href = '/views/login.html?redirect=practice';
     }
 
@@ -393,8 +511,6 @@
 
     // Referencias a elementos
     const textarea = document.getElementById('main-textarea');
-    const liveSuggestions = document.getElementById('live-suggestions');
-    const suggestionsContent = document.getElementById('suggestions-content');
     const liveCorrection = document.getElementById('live-correction');
     const correctedText = document.getElementById('corrected-text');
     const applyCorrectionBtn = document.getElementById('apply-correction');
@@ -402,40 +518,22 @@
     const analysisResult = document.getElementById('analysis-result');
     const analysisContent = document.getElementById('analysis-content');
 
-    // UI helpers for spell/client
+    // Referencias a stats
+    const wordCountEl = document.getElementById('word-count');
+    const sentenceCountEl = document.getElementById('sentence-count');
+    const tenseDetectionEl = document.getElementById('tense-detection');
+    const confidenceScoreEl = document.getElementById('confidence-score');
+
+    // UI helpers for spell/client - simplificado
     const ui = {
       showSpellProblems: (problems) => {
-        liveSuggestions.style.display = 'block';
-        suggestionsContent.innerHTML = '';
-        problems.forEach(p => {
-          const el = document.createElement('div');
-          el.className = 'suggestion-item';
-          el.innerHTML = `<div class="suggestion-type">Spelling: <strong>${p.word}</strong></div>
-            <div class="suggestion-text">Suggestions: ${p.suggestions.join(', ')}</div>`;
-          suggestionsContent.appendChild(el);
-        });
+        console.log('Spelling problems detected:', problems);
       },
       clearSpellProblems: () => {
-        liveSuggestions.style.display = 'none';
-        suggestionsContent.innerHTML = '';
+        console.log('Spelling problems cleared');
       },
       showQuick: (quick) => {
-        // display simple quick suggestions for grammar
-        if (quick && quick.suggestions && quick.suggestions.length > 0) {
-          let quickHtml = '';
-          quick.suggestions.forEach(s => {
-            quickHtml += `<div class="suggestion-item">
-              <div class="suggestion-type">Grammar: ${s.type || 'Tip'}</div>
-              <div class="suggestion-text">${s.message || s}</div>
-            </div>`;
-          });
-          if (quickHtml) {
-            suggestionsContent.innerHTML = quickHtml;
-            liveSuggestions.style.display = 'block';
-          }
-        } else {
-          // If no quick suggestions, don't show the panel
-        }
+        console.log('Quick suggestions:', quick);
       }
     };
 
@@ -447,15 +545,7 @@
       } catch (err) {
         console.error('Could not init live spell:', err);
       }
-    } else {
-      console.warn('initLiveSpell function not found - spell check disabled');
     }
-
-    // Referencias a stats
-    const wordCountEl = document.getElementById('word-count');
-    const sentenceCountEl = document.getElementById('sentence-count');
-    const tenseDetectionEl = document.getElementById('tense-detection');
-    const confidenceScoreEl = document.getElementById('confidence-score');
 
     // Inicializar el analizador en tiempo real con iconos
     const realTimeAnalyzer = new RealTimeAnalyzer(
@@ -475,10 +565,6 @@
         liveCorrection.style.display = 'none';
         currentCorrection = null;
         updateBasicStats(textarea.value);
-        
-        // Mostrar animación de éxito
-        UIAnimations.bounce(textarea);
-        UIToast.success('¡Corrección aplicada exitosamente!', 2000);
       }
     });
 
@@ -498,7 +584,7 @@
         analysisTimeout = setTimeout(() => {
           performLiveAnalysis(text);
           lastAnalyzedText = text;
-        }, 1000); // Reducido a 1 segundo para más rapidez
+        }, 1000);
       } else if (text.length <= 15) {
         hideLiveSuggestions();
         hideLiveCorrection();
@@ -517,12 +603,6 @@
     // Análisis en tiempo real
     async function performLiveAnalysis(text) {
       try {
-        // Primero hacer una corrección local simple para mostrar inmediatamente
-        const quickCorrection = performQuickCorrection(text);
-        if (quickCorrection.hasCorrection) {
-          showLiveCorrection(quickCorrection);
-        }
-
         const response = await fetch('/api/practice/live-analyze', {
           method: 'POST',
           headers: {
@@ -532,88 +612,32 @@
           body: JSON.stringify({ text })
         });
 
-        if (!response.ok) {
-          throw new Error('Analysis failed');
-        }
+        if (!response.ok) throw new Error('Analysis failed');
 
         const data = await response.json();
-        console.log('Live analysis response:', data); // Debug log
         
         if (data.success) {
           showLiveSuggestions(data.data.analysis);
           updateGrammarIndicator(data.data.analysis);
           
-          // Mostrar corrección del servidor si es mejor que la local
           if (data.data.analysis.correction && data.data.analysis.correction.hasCorrectionSuggestion) {
             showLiveCorrection(data.data.analysis.correction);
           }
         }
-
       } catch (error) {
         console.error('Live analysis error:', error);
         hideLiveSuggestions();
-        // Mantener la corrección local si falla el servidor
       }
     }
 
-    // Función de corrección rápida local
-    function performQuickCorrection(text) {
-      let correctedText = text;
-      let hasCorrection = false;
-
-      // Correcciones simples que siempre funcionan
-      const quickFixes = [
-        { from: /\biam\b/gi, to: 'I am' },
-        { from: /\bhugty\b/gi, to: 'hungry' },
-        { from: /\bwowo\b/gi, to: 'wow' },
-        { from: /\bmi\s+cousin\b/gi, to: 'my cousin' },
-        { from: /\b(I|you|we|they|he|she|it)\s+go\b/gi, to: '$1 went' },
-        { from: /\b(I|you|we|they|he|she|it)\s+see\b/gi, to: '$1 saw' },
-        { from: /\b(I|you|we|they|he|she|it)\s+eat\b/gi, to: '$1 ate' },
-        { from: /\b(I|you|we|they|he|she|it)\s+have\b/gi, to: '$1 had' },
-        { from: /\b(I|you|we|they)\s+are\s+(\w+ing)\b/gi, to: '$1 were $2' },
-        { from: /\b(he|she|it)\s+is\s+(\w+ing)\b/gi, to: '$1 was $2' }
-      ];
-
-      quickFixes.forEach(fix => {
-        const newText = correctedText.replace(fix.from, fix.to);
-        if (newText !== correctedText) {
-          correctedText = newText;
-          hasCorrection = true;
-        }
-      });
-
-      return {
-        hasCorrection,
-        correctedText,
-        hasCorrectionSuggestion: hasCorrection
-      };
-    }
-
-    // Mostrar sugerencias en tiempo real
+    // Funciones simplificadas - los consejos ahora son fijos en HTML
     function showLiveSuggestions(analysis) {
-      if (!analysis.suggestions || analysis.suggestions.length === 0) {
-        hideLiveSuggestions();
-        return;
-      }
-
-      let suggestionsHtml = '';
-      
-      analysis.suggestions.forEach(suggestion => {
-        suggestionsHtml += `
-          <div class="suggestion-item">
-            <div class="suggestion-type">${suggestion.type}</div>
-            <div class="suggestion-text">${suggestion.message}</div>
-          </div>
-        `;
-      });
-
-      suggestionsContent.innerHTML = suggestionsHtml;
-      liveSuggestions.style.display = 'block';
+      // Los consejos son fijos, solo log para debug
+      console.log('Live suggestions received:', analysis.suggestions);
     }
 
     function hideLiveSuggestions() {
-      liveSuggestions.style.display = 'none';
+      // No hacer nada, los consejos son fijos
     }
 
     function hideLiveCorrection() {
@@ -623,63 +647,49 @@
 
     // Mostrar corrección en tiempo real
     function showLiveCorrection(correction) {
-      console.log('Showing correction:', correction); // Debug log
-      
       const currentText = textarea.value.trim();
       let correctedTextToShow = correction.correctedText;
       
-      // Si no hay corrección específica, usar el texto actual
       if (!correctedTextToShow || correctedTextToShow === currentText) {
         hideLiveCorrection();
         return;
       }
       
-      // Mostrar la corrección con formato destacado
       correctedText.innerHTML = `"${correctedTextToShow}"`;
       currentCorrection = correctedTextToShow;
       liveCorrection.style.display = 'block';
-      
-      // Scroll para asegurar que se vea
-      setTimeout(() => {
-        liveCorrection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }, 100);
     }
 
     // Actualizar indicador de gramática
     function updateGrammarIndicator(analysis) {
-      const indicator = tenseDetectionEl.querySelector('.grammar-indicator');
-      
       if (analysis.overallCorrect) {
-        tenseDetectionEl.innerHTML = `Excellent <span class="grammar-indicator grammar-correct"></span>`;
+        tenseDetectionEl.textContent = 'Excellent';
+        tenseDetectionEl.style.color = '#10b981';
       } else if (analysis.hasCorrectTenses && analysis.hasIncorrectTenses) {
-        tenseDetectionEl.innerHTML = `Mixed <span class="grammar-indicator grammar-mixed"></span>`;
+        tenseDetectionEl.textContent = 'Mixed';
+        tenseDetectionEl.style.color = '#f59e0b';
       } else if (analysis.hasIncorrectTenses) {
-        tenseDetectionEl.innerHTML = `Needs work <span class="grammar-indicator grammar-incorrect"></span>`;
+        tenseDetectionEl.textContent = 'Needs work';
+        tenseDetectionEl.style.color = '#ef4444';
       } else {
-        tenseDetectionEl.innerHTML = `Keep writing <span class="grammar-indicator grammar-neutral"></span>`;
+        tenseDetectionEl.textContent = 'Keep writing';
+        tenseDetectionEl.style.color = '#6b7280';
       }
 
       confidenceScoreEl.textContent = `${analysis.confidenceScore || 0}%`;
     }
 
-    // Análisis completo al hacer clic
+    // Análisis completo
     analyzeBtn.addEventListener('click', async () => {
       const text = textarea.value.trim();
       
       if (text.length < 10) {
-        UIToast.warning('Por favor escribe al menos unas palabras antes de analizar.');
+        alert('Por favor escribe al menos unas palabras antes de analizar.');
         return;
       }
 
-      // Crear spinner en el botón
-      const spinner = new UISpinner(analyzeBtn.parentElement, {
-        text: 'Analizando tu escritura...',
-        size: 'md'
-      });
-      
       analyzeBtn.disabled = true;
       analyzeBtn.textContent = '🔍 Analizando...';
-      spinner.show();
 
       try {
         const response = await fetch('/api/practice/full-analyze', {
@@ -695,18 +705,15 @@
 
         if (data.success) {
           showFullAnalysis(data.data);
-          UIToast.success('¡Análisis completado exitosamente!');
         } else {
           throw new Error(data.message);
         }
-
       } catch (error) {
         console.error('Full analysis error:', error);
-        UIToast.error('Error al analizar. Por favor intenta de nuevo.');
+        alert('Error al analizar. Por favor intenta de nuevo.');
       } finally {
         analyzeBtn.disabled = false;
         analyzeBtn.textContent = '🔍 Analyze My Writing';
-        spinner.hide();
       }
     });
 
@@ -714,17 +721,12 @@
     function showFullAnalysis(data) {
       const { analysis, points, feedback } = data;
       
-      let resultClass = 'analysis-success';
-      if (!analysis.overallCorrect) {
-        resultClass = analysis.hasCorrectTenses ? 'analysis-mixed' : 'analysis-error';
-      }
-
       let contentHtml = `
         <h3>📊 Analysis Results</h3>
         <div style="margin: 1rem 0;">
           <strong>Score:</strong> ${points} points | 
           <strong>Accuracy:</strong> ${analysis.accuracyPercentage}% |
-          <strong>Sentences analyzed:</strong> ${analysis.totalSentences}
+          <strong>Sentences:</strong> ${analysis.totalSentences}
         </div>
       `;
 
@@ -733,29 +735,16 @@
       }
 
       if (analysis.detailedFeedback && analysis.detailedFeedback.length > 0) {
-        contentHtml += '<h4>💡 Specific Suggestions:</h4><ul>';
+        contentHtml += '<h4>💡 Suggestions:</h4><ul>';
         analysis.detailedFeedback.forEach(item => {
           contentHtml += `<li>${item}</li>`;
         });
         contentHtml += '</ul>';
       }
 
-      if (analysis.goodExamples && analysis.goodExamples.length > 0) {
-        contentHtml += '<h4>✅ Great examples you used:</h4><ul>';
-        analysis.goodExamples.forEach(example => {
-          contentHtml += `<li>"${example}"</li>`;
-        });
-        contentHtml += '</ul>';
-      }
-
       analysisContent.innerHTML = contentHtml;
-      analysisResult.className = `analysis-result ${resultClass}`;
       analysisResult.style.display = 'block';
-
-      // Scroll to results
-      analysisResult.scrollIntoView({ behavior: 'smooth' });
     }
   </script>
-
 </body>
 </html>
