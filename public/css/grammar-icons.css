@@ -1,0 +1,504 @@
+/* public/css/grammar-icons.css */
+
+/**
+ * ═══════════════════════════════════════════════════
+ * 🎯 GRAMMAR ICONS STYLES
+ * ═══════════════════════════════════════════════════
+ * 
+ * Estilos para los iconos de estructura gramatical
+ * Diseño amigable y profesional
+ */
+
+/* Variables CSS para consistencia */
+:root {
+  --icon-size: 80px;
+  --icon-border-radius: 12px;
+  --icon-spacing: 16px;
+  --icon-transition: all 0.3s ease;
+  
+  /* Estados de iconos */
+  --icon-inactive: #E8E8E8;
+  --icon-active: #4A90E2;
+  --icon-error: #D0021B;
+  --icon-success: #7ED321;
+  
+  /* Colores de texto */
+  --text-primary: #2C3E50;
+  --text-secondary: #7F8C8D;
+  --text-muted: #BDC3C7;
+}
+
+/* Contenedor principal */
+.grammar-icons-wrapper {
+  background: #FAFBFC;
+  border: 1px solid #E1E8ED;
+  border-radius: 16px;
+  padding: 24px;
+  margin: 20px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Header */
+.grammar-icons-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #E1E8ED;
+}
+
+.icons-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.tense-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tense-label {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.tense-type {
+  font-size: 14px;
+  font-weight: 600;
+  padding: 4px 12px;
+  background: #F8F9FA;
+  border-radius: 20px;
+  border: 1px solid #E1E8ED;
+}
+
+/* Contenedor de iconos */
+.grammar-icons-container {
+  margin-bottom: 24px;
+}
+
+.icon-group {
+  margin-bottom: 20px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.icon-group-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  padding-left: 8px;
+  border-left: 4px solid var(--icon-active);
+}
+
+.icons-row {
+  display: flex;
+  gap: var(--icon-spacing);
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+/* Iconos individuales */
+.grammar-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  background: white;
+  border: 2px solid var(--icon-inactive);
+  border-radius: var(--icon-border-radius);
+  cursor: pointer;
+  transition: var(--icon-transition);
+  position: relative;
+  padding: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.grammar-icon:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Estados de iconos */
+.grammar-icon.inactive {
+  border-color: var(--icon-inactive);
+  background: #F8F9FA;
+}
+
+.grammar-icon.inactive .icon-symbol {
+  opacity: 0.4;
+  filter: grayscale(100%);
+}
+
+.grammar-icon.inactive .icon-label,
+.grammar-icon.inactive .icon-example {
+  color: var(--text-muted);
+}
+
+.grammar-icon.active {
+  border-color: var(--icon-active);
+  background: white;
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+}
+
+.grammar-icon.active .icon-symbol {
+  opacity: 1;
+  filter: none;
+  transform: scale(1.1);
+}
+
+.grammar-icon.active .icon-label {
+  color: var(--icon-active);
+  font-weight: 600;
+}
+
+.grammar-icon.active .icon-example {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.grammar-icon.error {
+  border-color: var(--icon-error);
+  background: #FFF5F5;
+  animation: shake 0.5s ease-out;
+}
+
+.grammar-icon.error .icon-symbol {
+  opacity: 1;
+  filter: none;
+}
+
+.grammar-icon.error .icon-label {
+  color: var(--icon-error);
+  font-weight: 600;
+}
+
+.grammar-icon.error .icon-example {
+  color: var(--icon-error);
+}
+
+/* Elementos del icono */
+.icon-symbol {
+  font-size: 24px;
+  margin-bottom: 4px;
+  transition: var(--icon-transition);
+}
+
+.icon-label {
+  font-size: 11px;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 2px;
+  line-height: 1.2;
+  transition: var(--icon-transition);
+}
+
+.icon-example {
+  font-size: 9px;
+  text-align: center;
+  line-height: 1.1;
+  opacity: 0.8;
+  transition: var(--icon-transition);
+}
+
+/* Barra de progreso */
+.grammar-progress {
+  margin-bottom: 20px;
+  padding: 16px;
+  background: #F8F9FA;
+  border-radius: 12px;
+  border: 1px solid #E1E8ED;
+}
+
+.progress-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #E1E8ED;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--icon-active);
+  border-radius: 4px;
+  transition: width 0.5s ease-out, background-color 0.3s ease;
+  position: relative;
+}
+
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+.progress-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: right;
+  margin-top: 4px;
+}
+
+/* Sección de tips */
+.grammar-tips {
+  padding: 16px;
+  background: #F0F8FF;
+  border: 1px solid #B8E6FF;
+  border-radius: 12px;
+}
+
+.tips-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.tips-content {
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+
+.tip-item {
+  margin-bottom: 6px;
+  padding: 4px 0;
+}
+
+.tip-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Tooltip */
+.grammar-tooltip {
+  position: absolute;
+  background: #2C3E50;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 1.3;
+  max-width: 200px;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  animation: tooltipFadeIn 0.2s ease-out;
+}
+
+.grammar-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: #2C3E50;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes iconActivate {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes iconError {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-3px);
+  }
+  75% {
+    transform: translateX(3px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .grammar-icons-wrapper {
+    padding: 16px;
+    margin: 16px 0;
+  }
+  
+  .grammar-icons-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .icons-row {
+    justify-content: center;
+  }
+  
+  .grammar-icon {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .icon-symbol {
+    font-size: 20px;
+  }
+  
+  .icon-label {
+    font-size: 10px;
+  }
+  
+  .icon-example {
+    font-size: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .icons-row {
+    gap: 12px;
+  }
+  
+  .grammar-icon {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .icon-symbol {
+    font-size: 18px;
+  }
+  
+  .icon-label {
+    font-size: 9px;
+  }
+  
+  .icon-example {
+    font-size: 7px;
+  }
+}
+
+/* Estados especiales para diferentes tipos de tiempo */
+.past-continuous .grammar-icon.active {
+  border-color: #4A90E2;
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+}
+
+.past-simple .grammar-icon.active {
+  border-color: #7ED321;
+  box-shadow: 0 4px 12px rgba(126, 211, 33, 0.2);
+}
+
+.connector-group .grammar-icon.active {
+  border-color: #F5A623;
+  box-shadow: 0 4px 12px rgba(245, 166, 35, 0.2);
+}
+
+/* Efectos de hover mejorados */
+.grammar-icon:hover .icon-symbol {
+  transform: scale(1.1);
+}
+
+.grammar-icon.active:hover .icon-symbol {
+  transform: scale(1.2);
+}
+
+/* Indicadores de estado adicionales */
+.grammar-icon.active::before {
+  content: '✓';
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 20px;
+  height: 20px;
+  background: var(--icon-success);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.grammar-icon.error::before {
+  content: '!';
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 20px;
+  height: 20px;
+  background: var(--icon-error);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}

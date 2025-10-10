@@ -1,0 +1,435 @@
+/* public/css/real-time-feedback.css */
+
+/**
+ * ═══════════════════════════════════════════════════
+ * 💬 REAL-TIME FEEDBACK STYLES
+ * ═══════════════════════════════════════════════════
+ * 
+ * Estilos para el feedback en tiempo real
+ * Diseño amigable y educativo
+ */
+
+/* Variables para feedback */
+:root {
+  --feedback-success: #7ED321;
+  --feedback-error: #D0021B;
+  --feedback-warning: #F5A623;
+  --feedback-info: #4A90E2;
+  --feedback-neutral: #9B9B9B;
+  --feedback-bg: #FAFBFC;
+  --feedback-border: #E1E8ED;
+  --feedback-radius: 12px;
+  --feedback-transition: all 0.3s ease;
+}
+
+/* Contenedor principal de feedback */
+.feedback-container {
+  background: var(--feedback-bg);
+  border: 1px solid var(--feedback-border);
+  border-radius: var(--feedback-radius);
+  padding: 20px;
+  margin: 16px 0;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  transition: var(--feedback-transition);
+}
+
+/* Estados del feedback */
+.feedback-initial,
+.feedback-analyzing,
+.feedback-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+}
+
+.feedback-initial .feedback-icon,
+.feedback-analyzing .feedback-icon,
+.feedback-error .feedback-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.feedback-initial .feedback-text,
+.feedback-analyzing .feedback-text,
+.feedback-error .feedback-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.feedback-initial .feedback-hint,
+.feedback-error .feedback-hint {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* Animación de análisis */
+.feedback-analyzing .feedback-icon {
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.7;
+  }
+}
+
+/* Items de feedback */
+.feedback-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  transition: var(--feedback-transition);
+  animation: feedbackSlideIn 0.3s ease-out;
+}
+
+.feedback-item:last-child {
+  margin-bottom: 0;
+}
+
+.feedback-item .feedback-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.feedback-item .feedback-text {
+  font-size: 14px;
+  line-height: 1.4;
+  flex: 1;
+}
+
+/* Tipos de feedback items */
+.feedback-item.error {
+  background: #FFF5F5;
+  border: 1px solid #FEB2B2;
+  color: var(--feedback-error);
+}
+
+.feedback-item.error .feedback-icon {
+  color: var(--feedback-error);
+}
+
+.feedback-item.success {
+  background: #F0FFF4;
+  border: 1px solid #9AE6B4;
+  color: #22543D;
+}
+
+.feedback-item.success .feedback-icon {
+  color: var(--feedback-success);
+}
+
+.feedback-item.warning {
+  background: #FFFBEB;
+  border: 1px solid #F6E05E;
+  color: #744210;
+}
+
+.feedback-item.warning .feedback-icon {
+  color: var(--feedback-warning);
+}
+
+.feedback-item.tip {
+  background: #EBF8FF;
+  border: 1px solid #90CDF4;
+  color: #2A4365;
+}
+
+.feedback-item.tip .feedback-icon {
+  color: var(--feedback-info);
+}
+
+.feedback-item.neutral {
+  background: #F7FAFC;
+  border: 1px solid #CBD5E0;
+  color: #4A5568;
+}
+
+.feedback-item.neutral .feedback-icon {
+  color: var(--feedback-neutral);
+}
+
+/* Secciones de feedback */
+.feedback-errors,
+.feedback-progress,
+.feedback-tips {
+  margin-bottom: 16px;
+}
+
+.feedback-errors:last-child,
+.feedback-progress:last-child,
+.feedback-tips:last-child {
+  margin-bottom: 0;
+}
+
+/* Feedback completo */
+.feedback-complete {
+  padding: 16px;
+}
+
+.feedback-header {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--feedback-border);
+}
+
+.feedback-header h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Puntuación */
+.feedback-score {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #F0F8FF;
+  border: 1px solid #B8E6FF;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.score-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.score-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--feedback-info);
+}
+
+/* Efectos hover para items interactivos */
+.feedback-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Animaciones */
+@keyframes feedbackSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Estados de carga */
+.feedback-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  color: var(--text-secondary);
+}
+
+.feedback-loading::before {
+  content: '';
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--feedback-border);
+  border-top-color: var(--feedback-info);
+  border-radius: 50%;
+  margin-right: 12px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .feedback-container {
+    padding: 16px;
+    margin: 12px 0;
+  }
+  
+  .feedback-item {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+  
+  .feedback-item .feedback-icon {
+    font-size: 16px;
+  }
+  
+  .feedback-item .feedback-text {
+    font-size: 13px;
+  }
+  
+  .feedback-score {
+    padding: 10px 12px;
+  }
+  
+  .score-value {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .feedback-container {
+    padding: 12px;
+  }
+  
+  .feedback-initial .feedback-icon,
+  .feedback-analyzing .feedback-icon,
+  .feedback-error .feedback-icon {
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+  
+  .feedback-initial .feedback-text,
+  .feedback-analyzing .feedback-text,
+  .feedback-error .feedback-text {
+    font-size: 14px;
+  }
+  
+  .feedback-initial .feedback-hint,
+  .feedback-error .feedback-hint {
+    font-size: 12px;
+  }
+}
+
+/* Efectos especiales para diferentes tipos de feedback */
+.feedback-item.error {
+  animation: feedbackSlideIn 0.3s ease-out, errorPulse 2s ease-out;
+}
+
+.feedback-item.success {
+  animation: feedbackSlideIn 0.3s ease-out, successGlow 1s ease-out;
+}
+
+@keyframes errorPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(208, 2, 27, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(208, 2, 27, 0);
+  }
+}
+
+@keyframes successGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(126, 211, 33, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(126, 211, 33, 0);
+  }
+}
+
+/* Estilos para correcciones inline */
+.feedback-correction {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  background: #FFF5F5;
+  border: 1px solid #FEB2B2;
+  border-radius: 4px;
+  font-size: 12px;
+  margin: 2px;
+}
+
+.feedback-correction .original {
+  text-decoration: line-through;
+  color: var(--feedback-error);
+}
+
+.feedback-correction .corrected {
+  color: var(--feedback-success);
+  font-weight: 600;
+}
+
+.feedback-correction .arrow {
+  color: var(--text-secondary);
+}
+
+/* Indicadores de progreso en tiempo real */
+.feedback-progress-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #F0F8FF;
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--feedback-info);
+}
+
+.feedback-progress-indicator .progress-dots {
+  display: flex;
+  gap: 4px;
+}
+
+.feedback-progress-indicator .progress-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--feedback-border);
+  transition: background-color 0.3s ease;
+}
+
+.feedback-progress-indicator .progress-dot.active {
+  background: var(--feedback-info);
+}
+
+/* Estilos para tips contextuales */
+.feedback-contextual-tip {
+  position: relative;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #EBF8FF 0%, #F0F8FF 100%);
+  border: 1px solid #90CDF4;
+  border-radius: 8px;
+  margin: 8px 0;
+}
+
+.feedback-contextual-tip::before {
+  content: '💡';
+  position: absolute;
+  top: -8px;
+  left: 16px;
+  background: #EBF8FF;
+  padding: 4px;
+  border-radius: 50%;
+  font-size: 14px;
+}
+
+.feedback-contextual-tip .tip-title {
+  font-weight: 600;
+  color: #2A4365;
+  margin-bottom: 4px;
+}
+
+.feedback-contextual-tip .tip-content {
+  font-size: 13px;
+  color: #2A4365;
+  line-height: 1.4;
+}

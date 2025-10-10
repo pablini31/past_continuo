@@ -1,0 +1,472 @@
+/* public/css/theme-styles.css */
+
+/**
+ * ═══════════════════════════════════════════════════
+ * 🌓 UNIFIED THEME SYSTEM - Single Source of Truth
+ * ═══════════════════════════════════════════════════
+ * 
+ * Sistema de temas unificado basado en el éxito de login.html
+ * Este archivo debe ser incluido en TODAS las páginas
+ */
+
+/* ═══════════════════════════════════════════════════
+   🎨 CSS VARIABLES - LIGHT THEME (DEFAULT)
+   ═══════════════════════════════════════════════════ */
+
+:root {
+  /* Colores principales - Tema Claro */
+  --theme-bg-primary: #ffffff;
+  --theme-bg-secondary: #f7fafc;
+  --theme-bg-tertiary: #edf2f7;
+  --theme-bg-gradient: linear-gradient(135deg, #ffffff 0%, #f7fafc 50%, #edf2f7 100%);
+  
+  /* Textos - Tema Claro */
+  --theme-text-primary: #1a202c;
+  --theme-text-secondary: #4a5568;
+  --theme-text-muted: #718096;
+  --theme-text-accent: #2b6cb0;
+  
+  /* Colores de UI */
+  --theme-primary: #2b6cb0;
+  --theme-primary-hover: #2c5aa0;
+  --theme-success: #38a169;
+  --theme-warning: #d69e2e;
+  --theme-error: #e53e3e;
+  
+  /* Bordes y sombras */
+  --theme-border: #e2e8f0;
+  --theme-border-hover: #cbd5e0;
+  --theme-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --theme-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* ═══════════════════════════════════════════════════
+   🌙 DARK THEME VARIABLES
+   ═══════════════════════════════════════════════════ */
+
+[data-theme="dark"] {
+  /* Colores principales - Tema Oscuro (mejorado) */
+  --theme-bg-primary: #1a1f2e;
+  --theme-bg-secondary: #252b3d;
+  --theme-bg-tertiary: #2f364a;
+  --theme-bg-gradient: linear-gradient(135deg, #1a1f2e 0%, #252b3d 50%, #2f364a 100%);
+  
+  /* Textos - Tema Oscuro (mejor contraste) */
+  --theme-text-primary: #e8eaf0;
+  --theme-text-secondary: #c1c7d3;
+  --theme-text-muted: #8b95a8;
+  --theme-text-accent: #5ba3f5;
+  
+  /* Colores de UI */
+  --theme-primary: #4a9eff;
+  --theme-primary-hover: #3d8bdb;
+  --theme-success: #4ade80;
+  --theme-warning: #fbbf24;
+  --theme-error: #f87171;
+  
+  /* Bordes y sombras */
+  --theme-border: #3f4756;
+  --theme-border-hover: #4f5768;
+  --theme-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --theme-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+}
+
+/* ═══════════════════════════════════════════════════
+   🏗️ UNIVERSAL BASE STYLES
+   ═══════════════════════════════════════════════════ */
+
+body {
+  background: var(--theme-bg-gradient) !important;
+  color: var(--theme-text-primary) !important;
+  transition: all 0.3s ease;
+}
+
+/* ═══════════════════════════════════════════════════
+   📦 GENERIC CONTAINER CLASSES
+   ═══════════════════════════════════════════════════ */
+
+.page-container {
+  background: var(--theme-bg-primary);
+  color: var(--theme-text-primary);
+  min-height: 100vh;
+  transition: all 0.3s ease;
+}
+
+.content-section {
+  background: var(--theme-bg-secondary);
+  color: var(--theme-text-primary);
+  border: 1px solid var(--theme-border);
+  transition: all 0.3s ease;
+}
+
+/* ═══════════════════════════════════════════════════
+   🎴 CARD COMPONENTS
+   ═══════════════════════════════════════════════════ */
+
+.card,
+.feature-card,
+.step-card {
+  background: var(--theme-bg-secondary) !important;
+  color: var(--theme-text-primary) !important;
+  border: 1px solid var(--theme-border) !important;
+  box-shadow: var(--theme-shadow) !important;
+  transition: all 0.3s ease;
+}
+
+.card:hover,
+.feature-card:hover,
+.step-card:hover {
+  box-shadow: var(--theme-shadow-lg) !important;
+  border-color: var(--theme-border-hover) !important;
+}
+
+.card h1,
+.card h2,
+.card h3,
+.card h4,
+.card h5,
+.card h6,
+.feature-card h1,
+.feature-card h2,
+.feature-card h3,
+.feature-card h4,
+.feature-card h5,
+.feature-card h6,
+.step-card h1,
+.step-card h2,
+.step-card h3,
+.step-card h4,
+.step-card h5,
+.step-card h6 {
+  color: var(--theme-text-primary) !important;
+}
+
+.card p,
+.feature-card p,
+.step-card p {
+  color: var(--theme-text-secondary) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   🔗 NAVIGATION COMPONENTS
+   ═══════════════════════════════════════════════════ */
+
+.navbar {
+  background: var(--theme-bg-secondary) !important;
+  border-bottom: 1px solid var(--theme-border) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+.navbar-brand {
+  color: var(--theme-text-accent) !important;
+}
+
+.navbar-link {
+  color: var(--theme-text-secondary) !important;
+}
+
+.navbar-link:hover {
+  color: var(--theme-text-accent) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   🎯 HERO SECTIONS
+   ═══════════════════════════════════════════════════ */
+
+.hero {
+  background: var(--theme-bg-gradient) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+.hero-title {
+  color: var(--theme-text-primary) !important;
+}
+
+.hero-subtitle {
+  color: var(--theme-text-secondary) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   🔘 BUTTON COMPONENTS
+   ═══════════════════════════════════════════════════ */
+
+.button-primary,
+.btn-primary {
+  background: var(--theme-primary) !important;
+  border-color: var(--theme-primary) !important;
+  color: white !important;
+}
+
+.button-primary:hover,
+.btn-primary:hover {
+  background: var(--theme-primary-hover) !important;
+  border-color: var(--theme-primary-hover) !important;
+}
+
+.btn-outline {
+  background: transparent !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text-secondary) !important;
+}
+
+.btn-outline:hover {
+  background: var(--theme-bg-tertiary) !important;
+  border-color: var(--theme-border-hover) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   📝 FORM COMPONENTS
+   ═══════════════════════════════════════════════════ */
+
+.form-input,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+  background: var(--theme-bg-primary) !important;
+  border: 1px solid var(--theme-border) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+.form-input:focus,
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+textarea:focus {
+  border-color: var(--theme-primary) !important;
+  box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.15) !important;
+}
+
+.form-input::placeholder,
+input::placeholder,
+textarea::placeholder {
+  color: var(--theme-text-muted) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   🌓 THEME TOGGLE BUTTON
+   ═══════════════════════════════════════════════════ */
+
+.theme-toggle {
+  background: var(--theme-bg-primary) !important;
+  border: 1px solid var(--theme-border) !important;
+  color: var(--theme-text-secondary) !important;
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.theme-toggle:hover {
+  background: var(--theme-bg-tertiary) !important;
+  border-color: var(--theme-primary) !important;
+  color: var(--theme-primary) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   📑 SPECIFIC PAGE ELEMENTS
+   ═══════════════════════════════════════════════════ */
+
+/* Smart Practice specific */
+.practice-title {
+  color: var(--theme-text-accent) !important;
+}
+
+.practice-subtitle {
+  color: var(--theme-text-secondary) !important;
+}
+
+.smart-practice-container {
+  background: var(--theme-bg-primary) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+/* Writing area */
+.writing-area {
+  background: var(--theme-bg-secondary) !important;
+  border: 1px solid var(--theme-border) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+/* Live correction */
+#live-correction {
+  background: var(--theme-bg-secondary) !important;
+  border: 2px solid var(--theme-success) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+/* Progress sections y elementos específicos del modo oscuro */
+.progress-section,
+.structure-progress {
+  background: var(--theme-bg-secondary) !important;
+  border: 1px solid var(--theme-border) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+.progress-bar {
+  background: var(--theme-bg-tertiary) !important;
+}
+
+.progress-bar-fill {
+  background: var(--theme-primary) !important;
+}
+
+/* Contenedores de consejos y feedback */
+.tip-container,
+.feedback-container,
+.suggestion-box {
+  background: var(--theme-bg-secondary) !important;
+  border: 1px solid var(--theme-border) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+/* Elementos de texto específicos que pueden tener problemas de contraste */
+.text-muted {
+  color: var(--theme-text-muted) !important;
+}
+
+.text-secondary {
+  color: var(--theme-text-secondary) !important;
+}
+
+/* Asegurar que todos los inputs y textareas tengan buen contraste */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+  background: var(--theme-bg-primary) !important;
+  border: 1px solid var(--theme-border) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--theme-primary) !important;
+  box-shadow: 0 0 0 2px rgba(74, 158, 255, 0.2) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   🔧 UTILITY CLASSES
+   ═══════════════════════════════════════════════════ */
+
+.bg-theme-primary { background: var(--theme-bg-primary) !important; }
+.bg-theme-secondary { background: var(--theme-bg-secondary) !important; }
+.text-theme-primary { color: var(--theme-text-primary) !important; }
+.text-theme-secondary { color: var(--theme-text-secondary) !important; }
+.text-theme-accent { color: var(--theme-text-accent) !important; }
+.border-theme { border-color: var(--theme-border) !important; }
+
+/* ═══════════════════════════════════════════════════
+   🏠 OVERRIDE ANY SPECIFIC ISSUES
+   ═══════════════════════════════════════════════════ */
+
+/* Ensure all sections inherit theme colors */
+section {
+  background: inherit !important;
+  color: inherit !important;
+}
+
+/* Fix any remaining white backgrounds */
+.container,
+.container-sm,
+.content,
+main {
+  background: transparent !important;
+  color: inherit !important;
+}
+
+/* Ensure all headings use theme colors */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--theme-text-primary) !important;
+}
+
+/* Ensure all paragraphs use theme colors */
+p {
+  color: var(--theme-text-secondary) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   🌙 SOLUCIONES ESPECÍFICAS PARA MODO OSCURO
+   ═══════════════════════════════════════════════════ */
+
+/* Forzar estilos para elementos problemáticos en modo oscuro */
+[data-theme="dark"] .card,
+[data-theme="dark"] .container-white,
+[data-theme="dark"] .bg-white,
+[data-theme="dark"] .practice-card,
+[data-theme="dark"] .feedback-card,
+[data-theme="dark"] .analysis-card,
+[data-theme="dark"] .tiempo-verbal,
+[data-theme="dark"] .progreso-estructura,
+[data-theme="dark"] .consejos,
+[data-theme="dark"] .smart-writing-practice {
+  background: var(--theme-bg-secondary) !important;
+  color: var(--theme-text-primary) !important;
+  border: 1px solid var(--theme-border) !important;
+}
+
+/* Asegurar que los placeholders tengan buen contraste */
+[data-theme="dark"] ::placeholder {
+  color: var(--theme-text-muted) !important;
+  opacity: 0.8;
+}
+
+/* Scrollbars para modo oscuro */
+[data-theme="dark"] * {
+  scrollbar-color: var(--theme-border) var(--theme-bg-secondary);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar {
+  background: var(--theme-bg-secondary);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: var(--theme-border);
+  border-radius: 4px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--theme-text-muted);
+}
+
+/* Botones específicos en modo oscuro */
+[data-theme="dark"] .btn-outline {
+  background: var(--theme-bg-primary) !important;
+  border: 1px solid var(--theme-border) !important;
+  color: var(--theme-text-secondary) !important;
+}
+
+[data-theme="dark"] .btn-outline:hover {
+  background: var(--theme-bg-tertiary) !important;
+  color: var(--theme-text-primary) !important;
+  border-color: var(--theme-primary) !important;
+}
+
+/* Forzar elementos específicos que mantienen fondo blanco */
+[data-theme="dark"] div,
+[data-theme="dark"] span,
+[data-theme="dark"] section {
+  color: inherit;
+}
+
+/* Casos específicos para elementos con clases que fuerzan blanco */
+[data-theme="dark"] .white,
+[data-theme="dark"] .bg-light,
+[data-theme="dark"] .light {
+  background: var(--theme-bg-secondary) !important;
+  color: var(--theme-text-primary) !important;
+}
+
+/* Mejorar contraste de enlaces */
+[data-theme="dark"] a {
+  color: var(--theme-text-accent) !important;
+}
+
+[data-theme="dark"] a:hover {
+  color: var(--theme-primary) !important;
+}

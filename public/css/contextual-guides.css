@@ -1,0 +1,782 @@
+/* public/css/contextual-guides.css */
+
+/**
+ * ═══════════════════════════════════════════════════
+ * 🎯 CONTEXTUAL GUIDES STYLES
+ * ═══════════════════════════════════════════════════
+ * 
+ * Estilos para el componente de guías contextuales
+ */
+
+/* ═══════════════════════════════════════════════════
+   📦 CONTENEDOR PRINCIPAL
+   ═══════════════════════════════════════════════════ */
+
+.contextual-guides {
+  background: linear-gradient(135deg, #f8f9ff 0%, #e8f2ff 100%);
+  border: 2px solid #e1e8f5;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  margin: 20px 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.contextual-guides:hover {
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+/* ═══════════════════════════════════════════════════
+   🎯 HEADER DE GUÍAS
+   ═══════════════════════════════════════════════════ */
+
+.guides-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.guides-title {
+  margin: 0;
+  font-size: 1.2em;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.guides-icon {
+  font-size: 1.3em;
+}
+
+.guides-toggle {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2em;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.guides-toggle:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+/* ═══════════════════════════════════════════════════
+   📝 CONTENIDO DE GUÍAS
+   ═══════════════════════════════════════════════════ */
+
+.guides-content {
+  padding: 20px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.guides-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.guides-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.guides-content::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.guides-content::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* ═══════════════════════════════════════════════════
+   🏷️ SECCIONES
+   ═══════════════════════════════════════════════════ */
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-weight: 600;
+  color: #4a5568;
+  font-size: 1.1em;
+}
+
+.section-icon {
+  font-size: 1.2em;
+}
+
+.tips-section,
+.mini-lesson-section,
+.motivation-section,
+.next-steps-section {
+  margin-bottom: 24px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+
+.tips-section[style*="block"],
+.mini-lesson-section[style*="block"],
+.motivation-section[style*="block"],
+.next-steps-section[style*="block"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ═══════════════════════════════════════════════════
+   💡 TIPS EDUCATIVOS
+   ═══════════════════════════════════════════════════ */
+
+.tip-item {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.tip-item:hover {
+  border-color: #667eea;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+}
+
+.tip-header {
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f7fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.tip-title {
+  font-weight: 600;
+  color: #2d3748;
+  font-size: 0.95em;
+}
+
+.tip-expand {
+  color: #667eea;
+  font-weight: bold;
+  font-size: 1.2em;
+  transition: transform 0.2s ease;
+}
+
+.tip-item:hover .tip-expand {
+  transform: scale(1.2);
+}
+
+.tip-message {
+  padding: 12px 16px;
+  color: #4a5568;
+  line-height: 1.5;
+}
+
+.tip-details {
+  padding: 0 16px 12px;
+  border-top: 1px solid #f1f5f9;
+  background: #fafbfc;
+}
+
+.tip-example {
+  margin: 8px 0;
+  padding: 8px 12px;
+  background: #e6fffa;
+  border-left: 3px solid #38b2ac;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+}
+
+.tip-explanation {
+  margin: 8px 0;
+  color: #718096;
+  font-style: italic;
+  font-size: 0.9em;
+}
+
+/* ═══════════════════════════════════════════════════
+   📚 MINI-LECCIONES
+   ═══════════════════════════════════════════════════ */
+
+.mini-lesson {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.lesson-header {
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+  color: white;
+}
+
+.lesson-title {
+  margin: 0 0 8px 0;
+  font-size: 1.1em;
+  font-weight: 600;
+}
+
+.lesson-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 0.9em;
+  opacity: 0.9;
+}
+
+.lesson-difficulty {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: 500;
+}
+
+.difficulty-easy {
+  background: rgba(72, 187, 120, 0.2);
+  color: #2f855a;
+}
+
+.difficulty-medium {
+  background: rgba(237, 137, 54, 0.2);
+  color: #c05621;
+}
+
+.difficulty-hard {
+  background: rgba(245, 101, 101, 0.2);
+  color: #c53030;
+}
+
+/* Barra de progreso */
+.lesson-progress {
+  padding: 16px 20px;
+  background: #f7fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4299e1 0%, #3182ce 100%);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 0.9em;
+  color: #718096;
+  font-weight: 500;
+}
+
+/* Contenido de la lección */
+.lesson-content {
+  padding: 20px;
+  min-height: 200px;
+}
+
+.lesson-step {
+  display: none;
+  opacity: 0;
+  transform: translateX(20px);
+  transition: all 0.3s ease;
+}
+
+.lesson-step.active {
+  display: flex;
+  opacity: 1;
+  transform: translateX(0);
+  gap: 16px;
+}
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.step-content {
+  flex: 1;
+}
+
+.step-title {
+  margin: 0 0 8px 0;
+  color: #2d3748;
+  font-size: 1.1em;
+  font-weight: 600;
+}
+
+.step-text {
+  margin: 0 0 12px 0;
+  color: #4a5568;
+  line-height: 1.6;
+}
+
+.step-example {
+  padding: 12px 16px;
+  background: #fff5f5;
+  border-left: 3px solid #f56565;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+  margin-top: 12px;
+}
+
+/* Navegación de la lección */
+.lesson-navigation {
+  padding: 16px 20px;
+  background: #f7fafc;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.lesson-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9em;
+}
+
+.lesson-prev,
+.lesson-next {
+  background: #667eea;
+  color: white;
+}
+
+.lesson-prev:hover,
+.lesson-next:hover {
+  background: #5a67d8;
+  transform: translateY(-1px);
+}
+
+.lesson-prev:disabled,
+.lesson-next:disabled {
+  background: #cbd5e0;
+  color: #a0aec0;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.lesson-close {
+  background: #e2e8f0;
+  color: #4a5568;
+}
+
+.lesson-close:hover {
+  background: #cbd5e0;
+}
+
+/* ═══════════════════════════════════════════════════
+   💪 MOTIVACIÓN
+   ═══════════════════════════════════════════════════ */
+
+.motivation-message {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.motivation-message.priority-high {
+  border-color: #f6ad55;
+  background: linear-gradient(135deg, #fff7ed 0%, #fef5e7 100%);
+}
+
+.motivation-message.priority-medium {
+  border-color: #4299e1;
+  background: linear-gradient(135deg, #ebf8ff 0%, #e6f3ff 100%);
+}
+
+.motivation-message.priority-low {
+  border-color: #68d391;
+  background: linear-gradient(135deg, #f0fff4 0%, #e6fffa 100%);
+}
+
+.motivation-icon {
+  font-size: 2em;
+  flex-shrink: 0;
+}
+
+.motivation-content {
+  flex: 1;
+}
+
+.motivation-text {
+  font-weight: 500;
+  color: #2d3748;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.motivation-stats {
+  display: flex;
+  gap: 16px;
+  font-size: 0.9em;
+}
+
+.stat-item {
+  display: flex;
+  gap: 4px;
+}
+
+.stat-label {
+  color: #718096;
+}
+
+.stat-value {
+  font-weight: 600;
+  color: #2d3748;
+}
+
+/* Mensaje de completado */
+.completion-message {
+  background: linear-gradient(135deg, #68d391 0%, #48bb78 100%);
+  color: white;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+}
+
+.completion-icon {
+  font-size: 3em;
+  margin-bottom: 12px;
+}
+
+.completion-content h4 {
+  margin: 0 0 8px 0;
+  font-size: 1.2em;
+}
+
+.completion-content p {
+  margin: 0;
+  opacity: 0.9;
+}
+
+/* ═══════════════════════════════════════════════════
+   🎯 PRÓXIMOS PASOS
+   ═══════════════════════════════════════════════════ */
+
+.next-steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.step-item {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  gap: 16px;
+  transition: all 0.2s ease;
+}
+
+.step-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.step-item.priority-high {
+  border-left: 4px solid #f56565;
+}
+
+.step-item.priority-medium {
+  border-left: 4px solid #ed8936;
+}
+
+.step-item.priority-low {
+  border-left: 4px solid #38b2ac;
+}
+
+.step-number {
+  width: 32px;
+  height: 32px;
+  background: #667eea;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.9em;
+  flex-shrink: 0;
+}
+
+.step-content {
+  flex: 1;
+}
+
+.step-title {
+  margin: 0 0 6px 0;
+  font-weight: 600;
+  color: #2d3748;
+  font-size: 1em;
+}
+
+.step-description {
+  margin: 0 0 8px 0;
+  color: #4a5568;
+  line-height: 1.5;
+  font-size: 0.9em;
+}
+
+.step-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 0.8em;
+  color: #718096;
+}
+
+.step-time,
+.step-type {
+  background: #f7fafc;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+/* ═══════════════════════════════════════════════════
+   🌟 MENSAJE DE BIENVENIDA
+   ═══════════════════════════════════════════════════ */
+
+.welcome-message {
+  text-align: center;
+  padding: 40px 20px;
+  color: #4a5568;
+}
+
+.welcome-icon {
+  font-size: 4em;
+  margin-bottom: 16px;
+}
+
+.welcome-text h4 {
+  margin: 0 0 8px 0;
+  color: #2d3748;
+  font-size: 1.3em;
+}
+
+.welcome-text p {
+  margin: 0;
+  opacity: 0.8;
+  line-height: 1.5;
+}
+
+/* Mensaje de error */
+.error-message {
+  text-align: center;
+  padding: 40px 20px;
+  color: #e53e3e;
+}
+
+.error-icon {
+  font-size: 3em;
+  margin-bottom: 16px;
+}
+
+.error-text h4 {
+  margin: 0 0 8px 0;
+  font-size: 1.2em;
+}
+
+.error-text p {
+  margin: 0;
+  opacity: 0.8;
+}
+
+/* ═══════════════════════════════════════════════════
+   📱 RESPONSIVE DESIGN
+   ═══════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .contextual-guides {
+    margin: 10px 0;
+    border-radius: 12px;
+  }
+
+  .guides-header {
+    padding: 12px 16px;
+  }
+
+  .guides-title {
+    font-size: 1.1em;
+  }
+
+  .guides-content {
+    padding: 16px;
+    max-height: 400px;
+  }
+
+  .lesson-step.active {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .step-number {
+    align-self: flex-start;
+  }
+
+  .lesson-navigation {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .lesson-btn {
+    width: 100%;
+  }
+
+  .motivation-message {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+
+  .motivation-stats {
+    justify-content: center;
+  }
+
+  .step-item {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .step-number {
+    align-self: flex-start;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   ✨ ANIMACIONES
+   ═══════════════════════════════════════════════════ */
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.tip-item:hover {
+  animation: pulse 0.3s ease;
+}
+
+.lesson-step.active {
+  animation: slideInUp 0.3s ease;
+}
+
+.motivation-message {
+  animation: fadeIn 0.5s ease;
+}
+
+/* ═══════════════════════════════════════════════════
+   🎨 TEMA OSCURO (OPCIONAL)
+   ═══════════════════════════════════════════════════ */
+
+@media (prefers-color-scheme: dark) {
+  .contextual-guides {
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+    border-color: #4a5568;
+  }
+
+  .guides-content {
+    color: #e2e8f0;
+  }
+
+  .tip-item {
+    background: #2d3748;
+    border-color: #4a5568;
+    color: #e2e8f0;
+  }
+
+  .tip-header {
+    background: #4a5568;
+    border-color: #718096;
+  }
+
+  .tip-title {
+    color: #e2e8f0;
+  }
+
+  .mini-lesson {
+    background: #2d3748;
+    border-color: #4a5568;
+  }
+
+  .lesson-progress {
+    background: #4a5568;
+  }
+
+  .motivation-message {
+    background: #2d3748;
+    border-color: #4a5568;
+    color: #e2e8f0;
+  }
+
+  .step-item {
+    background: #2d3748;
+    border-color: #4a5568;
+    color: #e2e8f0;
+  }
+}
